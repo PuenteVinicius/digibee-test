@@ -1,13 +1,17 @@
-import { heroui } from '@heroui/theme';
-import type { Config } from "tailwindcss";
+import {heroui} from "@heroui/theme"
 
+/** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./index.html",
+    './src/layouts/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
+  theme: {
+    extend: {},
+  },
   plugins: [
     heroui({
       layout: {
@@ -29,7 +33,7 @@ export default {
         // LIGHT MODE
         light: {
           layout: {
-            hoverOpacity: 0.8, //  this value is applied as opacity-[value] when the component is hovered
+            // hoverOpacity: 0.8, //  this value is applied as opacity-[value] when the component is hovered
             boxShadow: {
               small:
                 "0px 0px 5px 0px rgb(0 0 0 / 0.02), 0px 2px 10px 0px rgb(0 0 0 / 0.06), 0px 0px 1px 0px rgb(0 0 0 / 0.3)",
@@ -44,7 +48,7 @@ export default {
             // Textual and commons
             background: "#FFFFFF",             // SURFACE
             focus: "#0D0D0D",                  // PRIMARY
-            overlay: "#0D0D0D",                // PRIMARY
+            // overlay: "#0D0D0D",                // PRIMARY 
             
             // Surfaces
             content1: {
@@ -174,15 +178,14 @@ export default {
         dark: {
           layout: {
             hoverOpacity: 0.8, //  this value is applied as opacity-[value] when the component is hovered
-            boxShadow: "none",
-            // boxShadow: {
-            //   small:
-            //     "0px 0px 5px 0px rgb(0 0 0 / 0.7), 0px 2px 10px 0px rgb(0 0 0 / 0.8), 0px 0px 1px 0px rgb(0 0 0 / 0.9)",
-            //   medium:
-            //     "0px 0px 15px 0px rgb(0 0 0 / 0.6), 0px 2px 30px 0px rgb(0 0 0 / 0.7), 0px 0px 1px 0px rgb(0 0 0 / 0.8)",
-            //   large:
-            //     "0px 0px 30px 0px rgb(0 0 0 / 0.5), 0px 30px 60px 0px rgb(0 0 0 / 0.6), 0px 0px 1px 0px rgb(0 0 0 / 0.7)",
-            // },
+            boxShadow: {
+              small:
+                "0px 0px 5px 0px rgb(0 0 0 / 0.7), 0px 2px 10px 0px rgb(0 0 0 / 0.8), 0px 0px 1px 0px rgb(0 0 0 / 0.9)",
+              medium:
+                "0px 0px 15px 0px rgb(0 0 0 / 0.6), 0px 2px 30px 0px rgb(0 0 0 / 0.7), 0px 0px 1px 0px rgb(0 0 0 / 0.8)",
+              large:
+                "0px 0px 30px 0px rgb(0 0 0 / 0.5), 0px 30px 60px 0px rgb(0 0 0 / 0.6), 0px 0px 1px 0px rgb(0 0 0 / 0.7)",
+            },
           },
           colors: {
 
@@ -192,14 +195,14 @@ export default {
             overlay: "#FFFFFF",                      // PRIMARY
             
             // Surfaces
-            content1: {
-              DEFAULT: "rgba(255,255,255, 0.05)",  // SURFACE CONTAINER LOW
-              foreground: "#FFFFFF"                  // ON SURFACE
-            },
-            content2: {
-              DEFAULT: "#262626",                    // SURFACE DIM
-              foreground: "#FFFFFF"                  // ON SURFACE
-            },
+            // content1: {
+            //   DEFAULT: "rgba(255,255,255, 0.05)",  // SURFACE CONTAINER LOW
+            //   foreground: "#FFFFFF"                  // ON SURFACE
+            // },
+            // content2: {
+            //   DEFAULT: "#262626",                    // SURFACE DIM
+            //   foreground: "#FFFFFF"                  // ON SURFACE
+            // },
 
             // Fontface
             foreground: {
@@ -317,9 +320,5 @@ export default {
       },
     }),
   ],
-} satisfies Config;
-
-  // Components that need adjustments
-    // - Highlight in the date picker input (the gray used in the background is too dark);
-    // - The background of the active tab in the solid variant should be white;
-    // - Remove the internal gradient on calendar components.
+  darkMode: "class",
+} 
