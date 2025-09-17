@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@heroui/button";
-import TestCaseDrawer from "./features/test-case-hub/TestCaseHub";
+import TestCaseDrawer from "./features/test-case-hub/TestCaseDrawer";
 
 const App = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);

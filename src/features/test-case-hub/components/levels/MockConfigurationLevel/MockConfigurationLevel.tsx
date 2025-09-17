@@ -1,20 +1,19 @@
 import React, { useState } from "react";
-import { MockConfig } from "../../../types/drawer";
 
-interface MockConfigurationProps {
+interface MockConfigurationLevelProps {
   onClose: () => void;
 }
 
-const initialMocks: MockConfig[] = [
+const initialMocks: any[] = [
   { id: "1", name: "Mock API Login", type: "HTTP", enabled: true },
   { id: "2", name: "Mock Database", type: "DB", enabled: false },
   { id: "3", name: "Mock File System", type: "FS", enabled: true },
 ];
 
-export const MockConfiguration: React.FC<MockConfigurationProps> = ({
+export const MockConfigurationLevel: React.FC<MockConfigurationLevelProps> = ({
   onClose,
 }) => {
-  const [mocks, setMocks] = useState<MockConfig[]>(initialMocks);
+  const [mocks, setMocks] = useState<any[]>(initialMocks);
 
   const toggleMock = (id: string) => {
     setMocks((prev) =>

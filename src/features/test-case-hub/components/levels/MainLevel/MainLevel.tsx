@@ -1,6 +1,6 @@
 import React from "react";
 
-interface TestCaseHubProps {
+interface MainLevelProps {
   onNavigateToMockConfig: () => void;
 }
 
@@ -22,7 +22,7 @@ const mockOptions = [
   },
 ];
 
-export const TestCaseHub: React.FC<TestCaseHubProps> = ({
+export const MainLevel: React.FC<MainLevelProps> = ({
   onNavigateToMockConfig,
 }) => {
   return (
