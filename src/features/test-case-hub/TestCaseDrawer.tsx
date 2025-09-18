@@ -24,11 +24,13 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
       mainStep={currentLevel === CreateLevels.MAIN}
       leftIcon={currentLevel === CreateLevels.MAIN ? <Xmark /> : <ArrowLeft />}
       rightIcon={<Book />}
-      onCloseDrawer={onCloseDrawer}
+      onCloseDrawer={currentLevel === CreateLevels.MAIN ? onCloseDrawer : goBack}
     >
       <>
         {currentLevel === CreateLevels.MAIN && (
-          <MainLevel onNavigateToMockConfig={() => navigateTo(CreateLevels.MOCK_CONFIGURATION)} />
+          <MainLevel
+            onLevelSelect={(selectedLevel) => navigateTo(selectedLevel)}
+          />
         )}
         {currentLevel === CreateLevels.MOCK_CONFIGURATION && (
           <MockConfigurationLevel onClose={() => goBack()} />

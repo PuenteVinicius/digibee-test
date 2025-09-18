@@ -41,8 +41,8 @@ const Drawer = ({
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex w-full justify-between pt-2">
-            {leftIcon && <div>{leftIcon}</div>}
-            {rightIcon && <div>{rightIcon}</div>}
+            {leftIcon && <div onClick={() => onCloseDrawer()} className="cursor-pointer">{leftIcon}</div>}
+            {rightIcon && <div onClick={() => onCloseDrawer()} className="cursor-pointer">{rightIcon}</div>}
           </div>
           <div className="w-full">
             <h1 className="mt-4 text-2xl font-semibold">{title}</h1>

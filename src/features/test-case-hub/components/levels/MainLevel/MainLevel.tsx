@@ -5,9 +5,10 @@ import { Switch } from "@heroui/switch";
 import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
+import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
 
 interface MainLevelProps {
-  onNavigateToMockConfig: () => void;
+  onLevelSelect: (level: CreateLevels) => void;
 }
 
 const animals = [
@@ -26,8 +27,17 @@ const animals = [
   { key: "crocodile", label: "Crocodile" },
 ];
 
-const MainLevel = ({ onNavigateToMockConfig }: MainLevelProps) => {
+const MainLevel = ({ onLevelSelect }: MainLevelProps) => {
   const [fullFlow, setFullFlow] = useState<boolean>(false);
+
+
+  const onStepCardClick = (option: Option) => {
+    const { level } = option;
+
+    if (!level) return;
+
+    return onLevelSelect(level);
+  }
 
   return (
     <div className="flex flex-col">
@@ -63,7 +73,7 @@ const MainLevel = ({ onNavigateToMockConfig }: MainLevelProps) => {
         <ul>
           {PATH_CONDITIONS.map((option: Option) => (
             <li className="mt-4">
-              <Card title={option.title} description={option.description} />
+              <Card onClick={() => onStepCardClick(option)} title={option.title} description={option.description} />
             </li>
           ))}
         </ul>
@@ -108,7 +118,7 @@ const MainLevel = ({ onNavigateToMockConfig }: MainLevelProps) => {
               }}
             >
               {animals.map((animal) => (
-                <SelectItem classNames={{}} key={animal.key}>
+                <SelectItem key={animal.key}>
                   {animal.label}
                 </SelectItem>
               ))}
