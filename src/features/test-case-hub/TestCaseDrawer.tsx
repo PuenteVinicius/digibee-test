@@ -7,6 +7,7 @@ import { Xmark } from "iconoir-react";
 import MockConfigurationLevel from "./components/levels/MockConfigurationLevel/MockConfigurationLevel";
 import { useState } from "react";
 import { MockOption } from "@/hooks/UseMockApi/useMockApi";
+import { addToast } from "@heroui/react";
 
 export interface DrawerProps {
   isOpen: boolean;
@@ -25,9 +26,21 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
   const updateMockedOptions = (selectedMockOption: MockOption | undefined) => {
     if (selectedMockOption) {
       const currentMockOptions: MockOption[] = selectedMockOptions;
-      currentMockOptions.push(selectedMockOption);
-      setSelectedMockOption(currentMockOptions);
+      if (
+        !currentMockOptions.find((item) => item.id === selectedMockOption.id)
+      ) {
+        currentMockOptions.push(selectedMockOption);
+        setSelectedMockOption(currentMockOptions);
+      }
     }
+  };
+
+  const onSave = () => {
+    addToast({
+      description: "Your test has been created successfully.",
+      color: "success",
+    });
+    onCloseDrawer();
   };
 
   return (
@@ -42,7 +55,7 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
         currentLevel === CreateLevels.MAIN ? onCloseDrawer : goBack
       }
       onApply={() => goBack()}
-      onSave={() => {}}
+      onSave={() => onSave()}
     >
       <>
         {currentLevel === CreateLevels.MAIN && (
