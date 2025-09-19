@@ -17,7 +17,9 @@ export interface DrawerProps {
   rightIcon?: ReactElement;
   children: ReactElement;
   mainStep: boolean;
-  onCloseDrawer: () => void;
+  onLeftButtonClick: () => void;
+  onRightButtonClick: () => void;
+  onCancelButtonClick: () => void;
   onSave: () => void;
   onApply: () => void;
 }
@@ -30,7 +32,9 @@ const Drawer = ({
   rightIcon,
   children,
   mainStep,
-  onCloseDrawer,
+  onLeftButtonClick,
+  onRightButtonClick,
+  onCancelButtonClick,
   onSave,
   onApply,
 }: DrawerProps) => {
@@ -39,19 +43,18 @@ const Drawer = ({
       isOpen={isOpen}
       radius="none"
       backdrop="transparent"
-      onOpenChange={onCloseDrawer}
       hideCloseButton
     >
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex w-full justify-between pt-2">
             {leftIcon && (
-              <div onClick={() => onCloseDrawer()} className="cursor-pointer">
+              <div onClick={() => onLeftButtonClick()} className="cursor-pointer">
                 {leftIcon}
               </div>
             )}
             {rightIcon && (
-              <div onClick={() => onCloseDrawer()} className="cursor-pointer">
+              <div onClick={() => onRightButtonClick()} className="cursor-pointer">
                 {rightIcon}
               </div>
             )}
@@ -69,7 +72,7 @@ const Drawer = ({
         <DrawerFooter className="flex w-full justify-between">
           {mainStep ? (
             <>
-              <Button color="primary" variant="light" onPress={onCloseDrawer}>
+              <Button color="primary" variant="light" onPress={onCancelButtonClick}>
                 Cancel
               </Button>
               <Button color="primary" variant="bordered" onPress={onSave}>

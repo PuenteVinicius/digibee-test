@@ -15,22 +15,25 @@ export interface DrawerProps {
 }
 
 const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
-  const [selectedMockOptions, setSelectedMockOption] = useState<MockOption[]>(
+  const [selectedMockOptions, setSelectedMockOptions] = useState<MockOption[]>(
     []
   );
+  const [newSelectedMockOption, setNewSelectedMockOption] =
+    useState<MockOption | null>();
 
   const { currentLevel, navigateTo, goBack } = useLevelManager({
     initialLevel: CreateLevels.MAIN,
   });
 
-  const updateMockedOptions = (selectedMockOption: MockOption | undefined) => {
-    if (selectedMockOption) {
+  const updateMockedOptions = () => {
+    if (newSelectedMockOption) {
       const currentMockOptions: MockOption[] = selectedMockOptions;
       if (
-        !currentMockOptions.find((item) => item.id === selectedMockOption.id)
+        !currentMockOptions.find((item) => item.id === newSelectedMockOption.id)
       ) {
-        currentMockOptions.push(selectedMockOption);
-        setSelectedMockOption(currentMockOptions);
+        currentMockOptions.push(newSelectedMockOption);
+        setSelectedMockOptions(currentMockOptions);
+        goBack();
       }
     }
   };
@@ -40,6 +43,12 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
       description: "Your test has been created successfully.",
       color: "success",
     });
+    killDrawer();
+  };
+
+  const killDrawer = () => {
+    setSelectedMockOptions([]);
+    setNewSelectedMockOption(null);
     onCloseDrawer();
   };
 
@@ -51,10 +60,12 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
       mainStep={currentLevel === CreateLevels.MAIN}
       leftIcon={currentLevel === CreateLevels.MAIN ? <Xmark /> : <ArrowLeft />}
       rightIcon={<Book />}
-      onCloseDrawer={
-        currentLevel === CreateLevels.MAIN ? onCloseDrawer : goBack
+      onLeftButtonClick={
+        currentLevel === CreateLevels.MAIN ? killDrawer : goBack
       }
-      onApply={() => goBack()}
+      onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
+      onCancelButtonClick={() => killDrawer()}
+      onApply={() => updateMockedOptions()}
       onSave={() => onSave()}
     >
       <>
@@ -66,9 +77,9 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
         )}
         {currentLevel === CreateLevels.MOCK_CONFIGURATION && (
           <MockConfigurationLevel
-            onSelectedMockOption={(
-              selectedMockOption: MockOption | undefined
-            ) => updateMockedOptions(selectedMockOption)}
+            onSelectedMockOption={(selectedMockOption) =>
+              setNewSelectedMockOption(selectedMockOption)
+            }
           />
         )}
       </>
