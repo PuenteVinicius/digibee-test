@@ -16,7 +16,7 @@ describe('useMockApi', () => {
     
     expect(result.current.loading).toBe(true); // Carrega automaticamente
     expect(result.current.error).toBeNull();
-    expect(result.current.selectOptions).toEqual([]);
+    expect(result.current.mockOptions).toEqual([]);
   });
 
   it('should fetch select options successfully', async () => {
@@ -29,8 +29,8 @@ describe('useMockApi', () => {
 
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
-    expect(result.current.selectOptions).toHaveLength(5);
-    expect(result.current.selectOptions[0]).toEqual({
+    expect(result.current.mockOptions).toHaveLength(5);
+    expect(result.current.mockOptions[0]).toEqual({
       id: '1',
       label: 'Opção 1',
       value: 'option1'

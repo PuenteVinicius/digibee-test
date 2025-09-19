@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Option, { PATH_CONDITIONS, PATH_OPTIONS } from "./constants";
 import Card from "@/components/shared/Card/Card";
 import { Switch } from "@heroui/switch";
@@ -6,9 +6,11 @@ import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
+import { MockOption } from "@/hooks/UseMockApi/useMockApi";
 
 interface MainLevelProps {
   onLevelSelect: (level: CreateLevels) => void;
+  selectedMockOptions: MockOption[];
 }
 
 const animals = [
@@ -27,9 +29,11 @@ const animals = [
   { key: "crocodile", label: "Crocodile" },
 ];
 
-const MainLevel = ({ onLevelSelect }: MainLevelProps) => {
+const MainLevel = ({
+  onLevelSelect,
+  selectedMockOptions = [],
+}: MainLevelProps) => {
   const [fullFlow, setFullFlow] = useState<boolean>(false);
-
 
   const onStepCardClick = (option: Option) => {
     const { level } = option;
@@ -37,7 +41,21 @@ const MainLevel = ({ onLevelSelect }: MainLevelProps) => {
     if (!level) return;
 
     return onLevelSelect(level);
-  }
+  };
+
+  const renderSelectedMockOptions = () => {
+    return selectedMockOptions?.map((selectedMockOption) => (
+      <Card
+        key={selectedMockOption.id}
+        title={selectedMockOption.label}
+        description={selectedMockOption.id}
+      />
+    ));
+  };
+
+  useEffect(() => {
+    console.log("selectedMockOptions", selectedMockOptions);
+  }, [selectedMockOptions]);
 
   return (
     <div className="flex flex-col">
@@ -73,7 +91,16 @@ const MainLevel = ({ onLevelSelect }: MainLevelProps) => {
         <ul>
           {PATH_CONDITIONS.map((option: Option) => (
             <li className="mt-4">
-              <Card onClick={() => onStepCardClick(option)} title={option.title} description={option.description} />
+              {option.level === CreateLevels.MOCK_CONFIGURATION &&
+              selectedMockOptions.length !== 0 ? (
+                renderSelectedMockOptions()
+              ) : (
+                <Card
+                  onClick={() => onStepCardClick(option)}
+                  title={option.title}
+                  description={option.description}
+                />
+              )}
             </li>
           ))}
         </ul>
@@ -114,13 +141,11 @@ const MainLevel = ({ onLevelSelect }: MainLevelProps) => {
               radius="none"
               label="Select an animal"
               classNames={{
-                trigger:'bg-white'
+                trigger: "bg-white",
               }}
             >
               {animals.map((animal) => (
-                <SelectItem key={animal.key}>
-                  {animal.label}
-                </SelectItem>
+                <SelectItem key={animal.key}>{animal.label}</SelectItem>
               ))}
             </Select>
           </div>

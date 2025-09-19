@@ -18,17 +18,21 @@ export interface DrawerProps {
   children: ReactElement;
   mainStep: boolean;
   onCloseDrawer: () => void;
+  onSave: () => void;
+  onApply: () => void;
 }
 
 const Drawer = ({
   isOpen,
-  onCloseDrawer,
   title,
+  description,
   leftIcon,
   rightIcon,
   children,
   mainStep,
-  description,
+  onCloseDrawer,
+  onSave,
+  onApply,
 }: DrawerProps) => {
   return (
     <HeroUiDrawer
@@ -68,11 +72,7 @@ const Drawer = ({
               <Button color="primary" variant="light" onPress={onCloseDrawer}>
                 Cancel
               </Button>
-              <Button
-                color="primary"
-                variant="bordered"
-                onPress={onCloseDrawer}
-              >
+              <Button color="primary" variant="bordered" onPress={onSave}>
                 Save
               </Button>
             </>
@@ -81,7 +81,7 @@ const Drawer = ({
               className="w-full"
               color="primary"
               variant="bordered"
-              onPress={onCloseDrawer}
+              onPress={onApply}
             >
               Apply
             </Button>

@@ -24,7 +24,7 @@ const Card = ({ title, description, onClick = () => {} }: DrawerProps) => {
           </p>
         </div>
         <div className="p-1 cursor-pointer" onClick={() => onClick()}>
-          <Plus/>
+          <Plus />
         </div>
       </CardBody>
     </HeroUiCard>
