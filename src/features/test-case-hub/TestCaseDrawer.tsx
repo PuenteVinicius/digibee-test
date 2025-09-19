@@ -1,10 +1,10 @@
 import Drawer from "@/components/shared/Drawer/Drawer";
 import { CreateLevels, levels } from "./hooks/levelManager/types";
 import useLevelManager from "./hooks/levelManager/useLevelManager";
-import { MockConfigurationLevel } from "./components/levels/MockConfigurationLevel/MockConfigurationLevel";
 import MainLevel from "./components/levels/MainLevel/MainLevel";
 import { ArrowLeft, Book } from "iconoir-react";
 import { Xmark } from "iconoir-react";
+import MockConfigurationLevel from "./components/levels/MockConfigurationLevel/MockConfigurationLevel";
 
 export interface DrawerProps {
   isOpen: boolean;

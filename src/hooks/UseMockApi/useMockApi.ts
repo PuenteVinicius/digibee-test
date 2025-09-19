@@ -1,19 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-
-// Tipos para os dados
-export interface SelectOption {
-  id: string;
-  label: string;
-  value: string;
-}
-
-export interface PostData {
-  name: string;
-  email: string;
-  category: string;
-  enabled: boolean;
-}
-
+import Mock from '@/features/test-case-hub/components/levels/MockConfigurationLevel/contants';
+import { useState, useCallback, useEffect } from 'react'
 export interface ApiResponse {
   success: boolean;
   message: string;
@@ -21,21 +7,20 @@ export interface ApiResponse {
 }
 
 // Dados fictícios para o select
-const mockSelectOptions: SelectOption[] = [
-  { id: '1', label: 'Opção 1', value: 'option1' },
-  { id: '2', label: 'Opção 2', value: 'option2' },
-  { id: '3', label: 'Opção 3', value: 'option3' },
-  { id: '4', label: 'Opção 4', value: 'option4' },
-  { id: '5', label: 'Opção 5', value: 'option5' },
+const mockSelectOptions: Mock[] = [
+  { id: "1", name: "Session Management", svgPath: "HTTP" },
+  { id: "2", name: "Rest V2 (HTTP / APIs)", svgPath: "DB" },
+  { id: "3", name: "Session Management", svgPath: "FS" },
+  { id: "4", name: "Transformer (JOLT)", svgPath: "FS" },
 ];
 
 export const useMockApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectOptions, setSelectOptions] = useState<SelectOption[]>([]);
+  const [selectOptions, setSelectOptions] = useState<Mock[]>([]);
 
   // Simula um GET para buscar opções do select
-  const fetchSelectOptions = useCallback(async (): Promise<SelectOption[]> => {
+  const fetchSelectOptions = useCallback(async (): Promise<Mock[]> => {
     setLoading(true);
     setError(null);
     
@@ -60,7 +45,7 @@ export const useMockApi = () => {
   }, []);
 
   // Simula um POST para enviar dados
-  const postData = useCallback(async (data: PostData): Promise<ApiResponse> => {
+  const postData = useCallback(async (data: Mock): Promise<ApiResponse> => {
     setLoading(true);
     setError(null);
     
@@ -74,7 +59,6 @@ export const useMockApi = () => {
           success: true,
           message: 'Dados enviados com sucesso!',
           data: {
-            id: Math.random().toString(36).substr(2, 9),
             ...data,
             createdAt: new Date().toISOString()
           }

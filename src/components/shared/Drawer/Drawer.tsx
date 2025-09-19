@@ -41,8 +41,16 @@ const Drawer = ({
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex w-full justify-between pt-2">
-            {leftIcon && <div onClick={() => onCloseDrawer()} className="cursor-pointer">{leftIcon}</div>}
-            {rightIcon && <div onClick={() => onCloseDrawer()} className="cursor-pointer">{rightIcon}</div>}
+            {leftIcon && (
+              <div onClick={() => onCloseDrawer()} className="cursor-pointer">
+                {leftIcon}
+              </div>
+            )}
+            {rightIcon && (
+              <div onClick={() => onCloseDrawer()} className="cursor-pointer">
+                {rightIcon}
+              </div>
+            )}
           </div>
           <div className="w-full">
             <h1 className="mt-4 text-2xl font-semibold">{title}</h1>
@@ -57,11 +65,7 @@ const Drawer = ({
         <DrawerFooter className="flex w-full justify-between">
           {mainStep ? (
             <>
-              <Button
-                color="primary"
-                variant="light"
-                onPress={onCloseDrawer}
-              >
+              <Button color="primary" variant="light" onPress={onCloseDrawer}>
                 Cancel
               </Button>
               <Button
@@ -73,7 +77,12 @@ const Drawer = ({
               </Button>
             </>
           ) : (
-            <Button color="danger" variant="flat" onPress={onCloseDrawer}>
+            <Button
+              className="w-full"
+              color="primary"
+              variant="bordered"
+              onPress={onCloseDrawer}
+            >
               Apply
             </Button>
           )}
