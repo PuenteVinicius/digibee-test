@@ -24,7 +24,7 @@ export default {
         },
         borderWidth: {
           small: "1.5px", // border-small
-          medium: "1.5px", // border-medium
+          medium: "2px", // border-medium
           large: "3px", // border-large
         },
       },

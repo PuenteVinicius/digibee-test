@@ -1,4 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
+
+import JoltSvg from "../../../public/assets/pipeline-step-jolt.tsx";
+import RestSvg from "../../../public/assets/pipeline-step-rest.tsx";
+import SessionSvg from "../../../public/assets/pipeline-step-session-management.tsx";
+
 export interface ApiResponse {
   success: boolean;
   message: string;
@@ -7,7 +12,7 @@ export interface ApiResponse {
 export interface MockOption {
   id: string;
   label: string;
-  svgPath?: string;
+  svgPath?: any;
 }
 
 export interface ServerOption {
@@ -18,10 +23,10 @@ export interface ServerOption {
 
 // Dados fictícios para o select
 export const MOCK_OPTIONS: MockOption[] = [
-  { id: "1", label: "Session Management", svgPath: "HTTP" },
-  { id: "2", label: "Rest V2 (HTTP / APIs)", svgPath: "DB" },
-  { id: "3", label: "Session Management", svgPath: "FS" },
-  { id: "4", label: "Transformer (JOLT)", svgPath: "FS" },
+  { id: "1", label: "Session Management", svgPath: SessionSvg },
+  { id: "2", label: "Rest V2 (HTTP / APIs)", svgPath: RestSvg },
+  { id: "3", label: "Session Management", svgPath: SessionSvg },
+  { id: "4", label: "Transformer (JOLT)", svgPath: JoltSvg },
 ];
 
 export const SERVER_OPTIONS: ServerOption[] = [
@@ -61,39 +66,43 @@ export const useMockApi = () => {
   }, []);
 
   // Simula um POST para enviar dados
-  const postData = useCallback(async (data: MockOption): Promise<ApiResponse> => {
-    setLoading(true);
-    setError(null);
+  const postData = useCallback(
+    async (data: MockOption): Promise<ApiResponse> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Simula delay de rede
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      try {
+        // Simula delay de rede
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Simula resposta bem-sucedida 80% das vezes
-      if (Math.random() > 0.2) {
+        // Simula resposta bem-sucedida 80% das vezes
+        if (Math.random() > 0.2) {
+          return {
+            success: true,
+            message: "Dados enviados com sucesso!",
+            data: {
+              ...data,
+              serverOptions: SERVER_OPTIONS,
+              createdAt: new Date().toISOString(),
+            },
+          };
+        } else {
+          throw new Error("Falha no envio dos dados");
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro no envio";
+        setError(errorMessage);
         return {
-          success: true,
-          message: "Dados enviados com sucesso!",
-          data: {
-            ...data,
-            serverOptions: SERVER_OPTIONS,
-            createdAt: new Date().toISOString(),
-          },
+          success: false,
+          message: errorMessage,
         };
-      } else {
-        throw new Error("Falha no envio dos dados");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro no envio";
-      setError(errorMessage);
-      return {
-        success: false,
-        message: errorMessage,
-      };
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Carrega as opções automaticamente quando o hook é inicializado
   useEffect(() => {

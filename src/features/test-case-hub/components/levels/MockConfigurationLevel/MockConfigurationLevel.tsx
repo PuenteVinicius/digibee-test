@@ -50,7 +50,7 @@ const MockConfigurationLevel = ({
                 onClick={() => saveMockOption(mockOption)}
                 key={mockOption.id}
               >
-                {mockOption.label}
+                {mockOption.svgPath} {mockOption.label}
               </SelectItem>
             ))}
           </Select>

@@ -53,20 +53,19 @@ const MainLevel = ({
     ));
   };
 
-  useEffect(() => {
-    console.log("selectedMockOptions", selectedMockOptions);
-  }, [selectedMockOptions]);
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-col mb-4">
-        <div className="flex w-full justify-between items-center">
+        <div className="flex w-full justify-between items-end mb-1">
           <h2 className="uppercase font-semibold text-xs tracking-widest">
             Define Path
           </h2>
-          <div className="flex items-center">
-            <p className="text-xs">
-              Full flow <span className="text-gray-500">(8 steps)</span>
+          <div className="flex items-end">
+            <p className="text-[14px] font-medium text-primary-500">
+              Full flow
+              <span className="text-gray-400 text-sm font-normal ml-1">
+                (8 steps)
+              </span>
             </p>
             <Switch
               className="ml-2"
@@ -117,7 +116,7 @@ const MainLevel = ({
             label="Name"
             labelPlacement="inside"
             name="name"
-            placeholder="Enter your name"
+            placeholder="Enter the name of the test"
             type="text"
             classNames={{
               inputWrapper: "bg-white border-b border-gray-200",
@@ -129,7 +128,7 @@ const MainLevel = ({
             label="Description"
             labelPlacement="inside"
             name="description"
-            placeholder="Enter your description"
+            placeholder="Add information about the test"
             type="description"
             classNames={{
               inputWrapper: "bg-white border-b border-gray-200",
@@ -139,7 +138,9 @@ const MainLevel = ({
             <Select
               className="w-full"
               radius="none"
-              label="Select an animal"
+              label="Group"
+              placeholder="Add your test to a group"
+              labelPlacement="inside"
               classNames={{
                 trigger: "bg-white",
               }}

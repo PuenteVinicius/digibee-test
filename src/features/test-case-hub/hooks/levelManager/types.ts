@@ -1,7 +1,6 @@
 export interface Level {
   title: string;
   description: string;
-
 }
 
 export enum CreateLevels {

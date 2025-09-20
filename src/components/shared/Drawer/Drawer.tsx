@@ -47,22 +47,28 @@ const Drawer = ({
     >
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">
-          <div className="flex w-full justify-between pt-2">
+          <div className="flex w-full justify-between items-end pt-2">
             {leftIcon && (
-              <div onClick={() => onLeftButtonClick()} className="cursor-pointer">
+              <div
+                onClick={() => onLeftButtonClick()}
+                className="cursor-pointer"
+              >
                 {leftIcon}
               </div>
             )}
             {rightIcon && (
-              <div onClick={() => onRightButtonClick()} className="cursor-pointer">
+              <div
+                onClick={() => onRightButtonClick()}
+                className="cursor-pointer"
+              >
                 {rightIcon}
               </div>
             )}
           </div>
           <div className="w-full">
-            <h1 className="mt-4 text-2xl font-semibold">{title}</h1>
+            <h1 className="mt-4 text-[22px] font-[700]">{title}</h1>
             {description && (
-              <p className="mt-2 font-light text-sm text-gray-500 leading-5">
+              <p className="mt-2 font-[400] tracking-wide text-sm text-gray-500 leading-5">
                 {description}
               </p>
             )}
@@ -72,10 +78,20 @@ const Drawer = ({
         <DrawerFooter className="flex w-full justify-between">
           {mainStep ? (
             <>
-              <Button color="primary" variant="light" onPress={onCancelButtonClick}>
+              <Button
+                className="font-semibold"
+                color="primary"
+                variant="light"
+                onPress={onCancelButtonClick}
+              >
                 Cancel
               </Button>
-              <Button color="primary" variant="bordered" onPress={onSave}>
+              <Button
+                className="border-x font-semibold"
+                color="primary"
+                variant="bordered"
+                onPress={onSave}
+              >
                 Save
               </Button>
             </>

@@ -58,8 +58,14 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
       title={levels[currentLevel].title}
       description={levels[currentLevel].description}
       mainStep={currentLevel === CreateLevels.MAIN}
-      leftIcon={currentLevel === CreateLevels.MAIN ? <Xmark /> : <ArrowLeft />}
-      rightIcon={<Book />}
+      leftIcon={
+        currentLevel === CreateLevels.MAIN ? (
+          <Xmark fontSize={16} />
+        ) : (
+          <ArrowLeft fontSize={16} />
+        )
+      }
+      rightIcon={<Book fontSize={13} />}
       onLeftButtonClick={
         currentLevel === CreateLevels.MAIN ? killDrawer : goBack
       }
