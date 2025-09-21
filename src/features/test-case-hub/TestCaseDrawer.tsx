@@ -53,43 +53,49 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
   };
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      title={levels[currentLevel].title}
-      description={levels[currentLevel].description}
-      mainStep={currentLevel === CreateLevels.MAIN}
-      leftIcon={
-        currentLevel === CreateLevels.MAIN ? (
-          <Xmark fontSize={16} />
-        ) : (
-          <ArrowLeft fontSize={16} />
-        )
-      }
-      rightIcon={<Book fontSize={13} />}
-      onLeftButtonClick={
-        currentLevel === CreateLevels.MAIN ? killDrawer : goBack
-      }
-      onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
-      onCancelButtonClick={() => killDrawer()}
-      onApply={() => updateMockedOptions()}
-      onSave={() => onSave()}
-    >
-      <>
-        {currentLevel === CreateLevels.MAIN && (
+    <>
+      {currentLevel === CreateLevels.MAIN && (
+        <Drawer
+          isOpen={isOpen}
+          title={levels[currentLevel].title}
+          description={levels[currentLevel].description}
+          mainStep={currentLevel === CreateLevels.MAIN}
+          leftIcon={<Xmark fontSize={16} />}
+          rightIcon={<Book fontSize={13} />}
+          onLeftButtonClick={killDrawer}
+          onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
+          onCancelButtonClick={() => killDrawer()}
+          onApply={() => updateMockedOptions()}
+          onSave={() => onSave()}
+        >
           <MainLevel
             onLevelSelect={(selectedLevel) => navigateTo(selectedLevel)}
             selectedMockOptions={selectedMockOptions}
           />
-        )}
-        {currentLevel === CreateLevels.MOCK_CONFIGURATION && (
+        </Drawer>
+      )}
+      {currentLevel === CreateLevels.MOCK_CONFIGURATION && (
+        <Drawer
+          isOpen={isOpen}
+          title={levels[currentLevel].title}
+          description={levels[currentLevel].description}
+          mainStep={false}
+          leftIcon={<ArrowLeft fontSize={13} />}
+          rightIcon={<Book fontSize={13} />}
+          onLeftButtonClick={goBack}
+          onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
+          onCancelButtonClick={() => killDrawer()}
+          onApply={() => updateMockedOptions()}
+          onSave={() => onSave()}
+        >
           <MockConfigurationLevel
             onSelectedMockOption={(selectedMockOption) =>
               setNewSelectedMockOption(selectedMockOption)
             }
           />
-        )}
-      </>
-    </Drawer>
+        </Drawer>
+      )}
+    </>
   );
 };
 
