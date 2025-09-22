@@ -18,10 +18,7 @@ interface MainLevelProps {
   mockOptions: MockOption[];
 }
 
-const MainLevel = ({
-  onLevelSelect,
-  mockOptions = [],
-}: MainLevelProps) => {
+const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
   const [fullFlow, setFullFlow] = useState<boolean>(false);
 
   const onStepCardClick = (option: Option) => {
@@ -40,6 +37,7 @@ const MainLevel = ({
           key={selectedMockOption.id}
           title={selectedMockOption?.serverOption?.label}
           description={selectedMockOption.label}
+          mockIcon={selectedMockOption.key}
         />
       </li>
     ));
@@ -95,10 +93,11 @@ const MainLevel = ({
             </li>
           ))}
           {mockOptions.length !== 0 && (
-            <div onClick={() => onLevelSelect(CreateLevels.MOCK_CONFIGURATION)} className="flex w-full mt-4 justify-end cursor-pointer">
-              <h2 className="font-semibold text-xs">
-                Add new mock
-              </h2>
+            <div
+              onClick={() => onLevelSelect(CreateLevels.MOCK_CONFIGURATION)}
+              className="flex w-full mt-4 justify-end cursor-pointer"
+            >
+              <h2 className="font-semibold text-xs">Add new mock</h2>
             </div>
           )}
         </ul>

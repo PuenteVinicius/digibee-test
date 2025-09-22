@@ -9,9 +9,9 @@ export interface ApiResponse {
 
 // Dados fictícios para o select
 export const MOCK_OPTIONS: MockOption[] = [
-  { id: "1", label: "Session Management", key: "SESSION_MANAGEMENT",},
+  { id: "1", label: "Session Management", key: "SESSION_MANAGEMENT" },
   { id: "2", label: "Rest V2 (HTTP / APIs)", key: "REST" },
-  { id: "3", label: "Session Management", key: "SESSION_MANAGEMENT" }, 
+  { id: "3", label: "Session Management", key: "SESSION_MANAGEMENT" },
   { id: "4", label: "Transformer (JOLT)", key: "JOLT" },
 ];
 

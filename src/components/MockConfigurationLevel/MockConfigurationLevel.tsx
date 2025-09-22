@@ -6,6 +6,8 @@ import SkeletonCard from "@/components/shared/Skeleton/Skeleton";
 import MockEmptyState from "@/components/shared/MockEmptyState/MockEmptyState";
 import { MockOption, ServerOption } from "@/types";
 import JoltIcon from "../../assets/pipeline-step-jolt.svg?react";
+import RestIcon from "../../assets/pipeline-step-rest.svg?react";
+import SessionManagementIcon from "../../assets/pipeline-step-session-management.svg?react";
 
 interface MockConfigurationLevelProps {
   onSelectedMockOption: (selectedMockOption: MockOption) => void;
@@ -47,18 +49,20 @@ const MockConfigurationLevel = ({
             mainWrapper: "flex items-center h-full",
             trigger: "bg-white h-full border",
           }}
+          value={mockOption?.label}
         >
           {mockOptions.map((mockOption) => (
             <SelectItem
               onClick={() => saveMockOption(mockOption)}
               key={mockOption.id}
             >
-              <div className="flex">
-                {mockOption.label}
-                <div>
-                <JoltIcon fill="blue"/>
-            
-                </div>
+              <div className="flex items-center">
+                {mockOption.key === "JOLT" && <JoltIcon />}
+                {mockOption.key === "REST" && <RestIcon />}
+                {mockOption.key === "SESSION_MANAGEMENT" && (
+                  <SessionManagementIcon />
+                )}
+                <span className="ml-2">{mockOption.label}</span>
               </div>
             </SelectItem>
           ))}
