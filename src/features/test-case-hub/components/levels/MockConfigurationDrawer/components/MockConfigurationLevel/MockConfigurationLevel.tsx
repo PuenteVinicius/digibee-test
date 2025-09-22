@@ -6,7 +6,7 @@ import { useMockApi } from "@/hooks/UseMockApi/useMockApi";
 import SkeletonCard from "@/components/shared/SkeletonCard/SkeletonCard";
 import MockEmptyState from "@/components/shared/MockEmptyState/MockEmptyState";
 import { MockOption, ServerOption } from "@/types";
-import useMockIcons from "@/hooks/UseIMockIcons/useMockIcons";
+import useMockIcons from "@/hooks/UseMockIcons/useMockIcons";
 
 interface MockConfigurationLevelProps {
   onSelectedMockOption: (selectedMockOption: MockOption) => void;
@@ -96,7 +96,7 @@ const MockConfigurationLevel = ({
                       base: cn(
                         "inline-flex m-0 ml-2 hover:border-primary items-center justify-between",
                         "flex-row-reverse cursor-pointer rounded-lg p-4",
-                        "border border-gray-200",
+                        "border border-gray-200"
                       ),
                     }}
                     description={serverOption.createdAt?.toString()}

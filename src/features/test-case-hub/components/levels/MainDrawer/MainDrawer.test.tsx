@@ -1,245 +1,188 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { MockOption } from "@/types";
+import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
+import Drawer from "@/components/shared/Drawer/Drawer";
+import MainDrawer from "./MainDrawer";
 
-import Drawer, { DrawerProps } from "./Drawer"; // ajuste o caminho conforme necessário
-
-// Mock dos componentes externos
-vi.mock("@heroui/drawer", () => ({
-  Drawer: vi.fn(({ children, isOpen, radius, backdrop, hideCloseButton }) => (
-    <div
-      data-backdrop={backdrop}
-      data-hideclosebutton={hideCloseButton}
-      data-isopen={isOpen}
-      data-radius={radius}
-      data-testid="drawer"
-    >
-      {isOpen && children}
-    </div>
-  )),
-  DrawerContent: vi.fn(({ children }) => (
-    <div data-testid="drawer-content">{children}</div>
-  )),
-  DrawerHeader: vi.fn(({ children, className }) => (
-    <div className={className} data-testid="drawer-header">
-      {children}
-    </div>
-  )),
-  DrawerBody: vi.fn(({ children }) => (
-    <div data-testid="drawer-body">{children}</div>
-  )),
-  DrawerFooter: vi.fn(({ children, className }) => (
-    <div className={className} data-testid="drawer-footer">
+// Mock dependencies
+vi.mock("@/components/shared/Drawer/Drawer", () => ({
+  default: vi.fn(({ children, ...props }) => (
+    <div data-testid="drawer" {...props}>
       {children}
     </div>
   )),
 }));
 
+vi.mock(
+  "@/features/test-case-hub/components/levels/MainDrawer/components/MainLevel/MainLevel",
+  () => ({
+    default: vi.fn(({ mockOptions, onLevelSelect }) => (
+      <div data-testid="main-level">
+        {mockOptions.map((option: MockOption) => (
+          <button
+            key={option.id}
+            onClick={() => onLevelSelect(CreateLevels.MAIN)}
+            data-testid={`level-option-${option.id}`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    )),
+  })
+);
+
 vi.mock("@heroui/button", () => ({
-  Button: vi.fn(({ children, onPress, color, variant, className }) => (
-    <button
-      data-color={color}
-      data-testid={
-        className?.includes("w-full") ? "full-width-button" : "button"
-      }
-      data-variant={variant}
-      onClick={onPress}
-    >
+  Button: vi.fn(({ children, onPress, ...props }) => (
+    <button onClick={onPress} {...props} data-testid="button">
       {children}
     </button>
   )),
 }));
 
-// Mock para ícones (simulando ReactElement)
-const MockIcon = ({ name }: { name: string }) => (
-  <div data-testid={`icon-${name}`}>{name} Icon</div>
-);
+vi.mock("@heroui/drawer", () => ({
+  DrawerBody: vi.fn(({ children, ...props }) => (
+    <div {...props} data-testid="drawer-body">
+      {children}
+    </div>
+  )),
+  DrawerFooter: vi.fn(({ children, ...props }) => (
+    <div {...props} data-testid="drawer-footer">
+      {children}
+    </div>
+  )),
+}));
 
-describe("Drawer Component", () => {
-  const defaultProps: DrawerProps = {
+vi.mock("iconoir-react", () => ({
+  Book: vi.fn(() => <div data-testid="book-icon" />),
+  Xmark: vi.fn(() => <div data-testid="xmark-icon" />),
+}));
+
+describe("MainDrawer", () => {
+  const mockProps = {
     isOpen: true,
-    title: "Test Drawer",
-    description: "Test description",
-    leftIcon: <MockIcon name="left" />,
-    rightIcon: <MockIcon name="right" />,
-    children: <div data-testid="drawer-content">Drawer Content</div>,
-    mainStep: true,
-    onLeftButtonClick: vi.fn(),
-    onRightButtonClick: vi.fn(),
+    mockOptions: [
+      { id: "1", label: "Option 1" },
+      { id: "2", label: "Option 2" },
+    ] as MockOption[],
     onCancelButtonClick: vi.fn(),
     onSave: vi.fn(),
-    onApply: vi.fn(),
-  };
-
-  const renderComponent = (props: Partial<DrawerProps> = {}) => {
-    return render(<Drawer {...defaultProps} {...props} />);
+    navigateTo: vi.fn(),
+    goBack: vi.fn(),
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should render drawer when isOpen is true", () => {
-    renderComponent({ isOpen: true });
+  it("renders without crashing", () => {
+    render(<MainDrawer {...mockProps} />);
 
     expect(screen.getByTestId("drawer")).toBeInTheDocument();
-    expect(screen.getByTestId("drawer-content")).toBeInTheDocument();
+    expect(screen.getByTestId("main-level")).toBeInTheDocument();
   });
 
-  it("should not render drawer content when isOpen is false", () => {
-    renderComponent({ isOpen: false });
-
-    expect(screen.queryByTestId("drawer-content")).not.toBeInTheDocument();
-  });
-
-  it("should render title and description correctly", () => {
-    renderComponent();
-
-    expect(screen.getByText("Test Drawer")).toBeInTheDocument();
-    expect(screen.getByText("Test description")).toBeInTheDocument();
-  });
-
-  it("should not render description when not provided", () => {
-    renderComponent({ description: undefined });
-
-    expect(screen.getByText("Test Drawer")).toBeInTheDocument();
-    expect(screen.queryByText("Test description")).not.toBeInTheDocument();
-  });
-
-  it("should render left and right icons when provided", () => {
-    renderComponent();
-
-    expect(screen.getByTestId("icon-left")).toBeInTheDocument();
-    expect(screen.getByTestId("icon-right")).toBeInTheDocument();
-  });
-
-  it("should not render icons when not provided", () => {
-    renderComponent({ leftIcon: undefined, rightIcon: undefined });
-
-    expect(screen.queryByTestId("icon-left")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("icon-right")).not.toBeInTheDocument();
-  });
-
-  it("should call onLeftButtonClick when left icon is clicked", () => {
-    const onLeftButtonClick = vi.fn();
-
-    renderComponent({ onLeftButtonClick });
-
-    fireEvent.click(screen.getByTestId("icon-left"));
-    expect(onLeftButtonClick).toHaveBeenCalledTimes(1);
-  });
-
-  it("should call onRightButtonClick when right icon is clicked", () => {
-    const onRightButtonClick = vi.fn();
-
-    renderComponent({ onRightButtonClick });
-
-    fireEvent.click(screen.getByTestId("icon-right"));
-    expect(onRightButtonClick).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render children content in DrawerBody", () => {
-    renderComponent();
-
-    expect(screen.getByTestId("drawer-body")).toBeInTheDocument();
-    expect(screen.getByText("Drawer Content")).toBeInTheDocument();
-  });
-
-  describe("Footer buttons - mainStep true", () => {
-    it("should render Cancel and Save buttons when mainStep is true", () => {
-      renderComponent({ mainStep: true });
-
-      expect(screen.getByText("Cancel")).toBeInTheDocument();
-      expect(screen.getByText("Save")).toBeInTheDocument();
-    });
-
-    it("should call onCancelButtonClick when Cancel button is clicked", () => {
-      const onCancelButtonClick = vi.fn();
-
-      renderComponent({ onCancelButtonClick });
-
-      fireEvent.click(screen.getByText("Cancel"));
-      expect(onCancelButtonClick).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call onSave when Save button is clicked", () => {
-      const onSave = vi.fn();
-
-      renderComponent({ onSave });
-
-      fireEvent.click(screen.getByText("Save"));
-      expect(onSave).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe("Footer buttons - mainStep false", () => {
-    it("should render Apply button when mainStep is false", () => {
-      renderComponent({ mainStep: false });
-
-      expect(screen.getByText("Apply")).toBeInTheDocument();
-      expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
-      expect(screen.queryByText("Save")).not.toBeInTheDocument();
-    });
-
-    it("should call onApply when Apply button is clicked", () => {
-      const onApply = vi.fn();
-
-      renderComponent({ mainStep: false, onApply });
-
-      fireEvent.click(screen.getByText("Apply"));
-      expect(onApply).toHaveBeenCalledTimes(1);
-    });
-
-    it("should render full width button when mainStep is false", () => {
-      renderComponent({ mainStep: false });
-
-      expect(screen.getByTestId("full-width-button")).toBeInTheDocument();
-    });
-  });
-
-  it("should apply correct CSS classes to header", () => {
-    renderComponent();
-
-    const header = screen.getByTestId("drawer-header");
-
-    expect(header).toHaveClass("flex");
-    expect(header).toHaveClass("flex-col");
-    expect(header).toHaveClass("gap-1");
-  });
-
-  it("should apply correct CSS classes to footer", () => {
-    renderComponent();
-
-    const footer = screen.getByTestId("drawer-footer");
-
-    expect(footer).toHaveClass("flex");
-    expect(footer).toHaveClass("w-full");
-    expect(footer).toHaveClass("justify-between");
-  });
-
-  it("should pass correct props to HeroUiDrawer", () => {
-    renderComponent();
+  it("passes correct props to Drawer component", () => {
+    render(<MainDrawer {...mockProps} />);
 
     const drawer = screen.getByTestId("drawer");
-
-    expect(drawer).toHaveAttribute("data-isopen", "true");
-    expect(drawer).toHaveAttribute("data-radius", "none");
-    expect(drawer).toHaveAttribute("data-backdrop", "transparent");
-    expect(drawer).toHaveAttribute("data-hideclosebutton", "true");
+    expect(drawer).toHaveAttribute("isOpen", "true");
   });
 
-  it("should render correct typography for title and description", () => {
-    renderComponent();
+  it("renders correct number of mock options", () => {
+    render(<MainDrawer {...mockProps} />);
 
-    const title = screen.getByText("Test Drawer");
+    const options = screen.getAllByTestId(/level-option-/);
+    expect(options).toHaveLength(mockProps.mockOptions.length);
+  });
 
-    expect(title).toHaveClass("text-2xl");
-    expect(title).toHaveClass("font-semibold");
+  it("calls navigateTo when a level option is selected", () => {
+    render(<MainDrawer {...mockProps} />);
 
-    const description = screen.getByText("Test description");
+    const firstOption = screen.getByTestId("level-option-1");
+    fireEvent.click(firstOption);
 
-    expect(description).toHaveClass("font-light");
-    expect(description).toHaveClass("text-sm");
-    expect(description).toHaveClass("text-gray-500");
-    expect(description).toHaveClass("leading-5");
+    expect(mockProps.navigateTo).toHaveBeenCalledWith(CreateLevels.MAIN);
+  });
+
+  it("calls onCancelButtonClick when cancel button is clicked", () => {
+    render(<MainDrawer {...mockProps} />);
+
+    const cancelButton = screen.getByText("Cancel");
+    fireEvent.click(cancelButton);
+
+    expect(mockProps.onCancelButtonClick).toHaveBeenCalled();
+  });
+
+  it("calls onSave when save button is clicked", () => {
+    render(<MainDrawer {...mockProps} />);
+
+    const saveButton = screen.getByText("Save");
+    fireEvent.click(saveButton);
+
+    expect(mockProps.onSave).toHaveBeenCalled();
+  });
+
+  it("disables save button when no mock options are provided", () => {
+    const propsWithEmptyOptions = {
+      ...mockProps,
+      mockOptions: [],
+    };
+
+    render(<MainDrawer {...propsWithEmptyOptions} />);
+
+    const saveButton = screen.getByText("Save");
+    expect(saveButton).toBeDisabled();
+  });
+
+  it("enables save button when mock options are provided", () => {
+    render(<MainDrawer {...mockProps} />);
+
+    const saveButton = screen.getByText("Save");
+    expect(saveButton).not.toBeDisabled();
+  });
+
+  it("renders drawer body and footer components", () => {
+    render(<MainDrawer {...mockProps} />);
+
+    expect(screen.getByTestId("drawer-body")).toBeInTheDocument();
+    expect(screen.getByTestId("drawer-footer")).toBeInTheDocument();
+  });
+
+  it("calls goBack when drawer left button is clicked", () => {
+    // We need to mock the Drawer component to simulate the left button click
+    vi.mocked(Drawer).mockImplementation(
+      ({ onLeftButtonClick, children, ...props }) => (
+        <div data-testid="drawer" {...props}>
+          <button onClick={onLeftButtonClick} data-testid="left-button">
+            Left Button
+          </button>
+          {children}
+        </div>
+      )
+    );
+
+    render(<MainDrawer {...mockProps} />);
+
+    const leftButton = screen.getByTestId("left-button");
+    fireEvent.click(leftButton);
+
+    expect(mockProps.goBack).toHaveBeenCalled();
+  });
+
+  it("matches snapshot when drawer is open", () => {
+    const { container } = render(<MainDrawer {...mockProps} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it("matches snapshot when drawer is closed", () => {
+    const propsWithClosedDrawer = {
+      ...mockProps,
+      isOpen: false,
+    };
+
+    const { container } = render(<MainDrawer {...propsWithClosedDrawer} />);
+    expect(container).toMatchSnapshot();
   });
 });

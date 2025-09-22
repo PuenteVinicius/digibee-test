@@ -1,256 +1,252 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
+import { MOCK_OPTIONS, SERVER_OPTIONS } from "@/constants";
+import { MockOption } from "@/types";
+import { useMockApi } from "./useMockApi";
 
-import {
-  useMockApi,
-  MOCK_OPTIONS,
-  SERVER_OPTIONS,
-  MockOption,
-} from "./useMockApi"; // ajuste o caminho
-
-// Mock do setTimeout e Math.random para controle dos testes
-vi.useFakeTimers();
-const mockMathRandom = vi.spyOn(Math, "random");
+// Mock the constants
+vi.mock("@/constants", () => ({
+  MOCK_OPTIONS: [
+    { id: "1", name: "Mock Option 1" },
+    { id: "2", name: "Mock Option 2" },
+  ],
+  SERVER_OPTIONS: [
+    { id: "server-1", name: "Server Option 1" },
+    { id: "server-2", name: "Server Option 2" },
+  ],
+}));
 
 describe("useMockApi", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     vi.clearAllMocks();
-    mockMathRandom.mockReturnValue(0.5); // Valor padrão para sucesso
   });
 
   afterEach(() => {
-    vi.runOnlyPendingTimers();
     vi.useRealTimers();
   });
 
-  it("should return initial state correctly", () => {
+  it("should initialize with correct default values", () => {
     const { result } = renderHook(() => useMockApi());
 
-    expect(result.current.loading).toBe(true); // Por causa do useEffect
+    expect(result.current.loading).toBe(true); // Should be true due to useEffect
     expect(result.current.error).toBeNull();
     expect(result.current.mockOptions).toEqual([]);
-    expect(typeof result.current.fetchMockOptions).toBe("function");
-    expect(typeof result.current.postData).toBe("function");
-    expect(typeof result.current.refetchOptions).toBe("function");
   });
 
-  describe("fetchMockOptions", () => {
-    it("should fetch options successfully", async () => {
-      mockMathRandom.mockReturnValue(0.9); // 90% de chance de sucesso
+  it("should fetch mock options successfully", async () => {
+    const { result } = renderHook(() => useMockApi());
 
-      const { result } = renderHook(() => useMockApi());
+    // Fast-forward timers to resolve the setTimeout
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
 
-      // Aguardar o useEffect inicial
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
+    await waitFor(() => {
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
       expect(result.current.mockOptions).toEqual(MOCK_OPTIONS);
     });
+  });
 
-    it("should handle fetch error", async () => {
-      mockMathRandom.mockReturnValue(0.05); // 10% de chance de erro
+  it("should handle fetch error when Math.random() returns low value", async () => {
+    // Force Math.random to return a value less than 0.1 to trigger error
+    const mockMath = Object.create(global.Math);
+    mockMath.random = () => 0.05;
+    global.Math = mockMath;
 
-      const { result } = renderHook(() => useMockApi());
+    const { result } = renderHook(() => useMockApi());
 
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
 
+    await waitFor(() => {
       expect(result.current.loading).toBe(false);
-      expect(result.current.error).toBe("Falha ao carregar opções");
+      expect(result.current.error).toBe("Error on retrieve data");
       expect(result.current.mockOptions).toEqual([]);
-    });
-
-    it("should set loading state during fetch", async () => {
-      const { result } = renderHook(() => useMockApi());
-
-      // Estado inicial após useEffect
-      expect(result.current.loading).toBe(true);
-
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.loading).toBe(false);
-    });
-
-    it("should be callable manually and return options", async () => {
-      mockMathRandom.mockReturnValue(0.9);
-
-      const { result } = renderHook(() => useMockApi());
-
-      let fetchResult: MockOption[] = [];
-
-      await act(async () => {
-        fetchResult = await result.current.fetchMockOptions();
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(fetchResult).toEqual(MOCK_OPTIONS);
-      expect(result.current.mockOptions).toEqual(MOCK_OPTIONS);
     });
   });
 
-  describe("postData", () => {
+  it("should call fetchMockOptions and return mock options", async () => {
+    const { result } = renderHook(() => useMockApi());
+
+    // Wait for initial fetch to complete
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Reset loading state
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    // Test refetch function
+    await act(async () => {
+      const promise = result.current.fetchMockOptions();
+      vi.advanceTimersByTime(1000);
+      await promise;
+    });
+
+    await waitFor(() => {
+      expect(result.current.mockOptions).toEqual(MOCK_OPTIONS);
+      expect(result.current.loading).toBe(false);
+    });
+  });
+
+  it("should handle error in fetchMockOptions", async () => {
+    const mockMath = Object.create(global.Math);
+    mockMath.random = () => 0.05;
+    global.Math = mockMath;
+
+    const { result } = renderHook(() => useMockApi());
+
+    await act(async () => {
+      try {
+        await result.current.fetchMockOptions();
+      } catch (error) {
+        // Expected to throw error
+      }
+      vi.advanceTimersByTime(1000);
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBe("Error on retrieve data");
+      expect(result.current.loading).toBe(false);
+    });
+  });
+
+  it("should post data successfully", async () => {
     const testData: MockOption = {
-      id: "5",
-      label: "Test Option",
-      svgPath: "TEST",
+      id: "test-1",
+      label: "Test Data",
+      key: "JOLT",
     };
+    const { result } = renderHook(() => useMockApi());
 
-    it("should post data successfully", async () => {
-      mockMathRandom.mockReturnValue(0.9); // 80% de chance de sucesso
+    let response: any;
+    await act(async () => {
+      response = await result.current.postData(testData);
+      vi.advanceTimersByTime(1500);
+    });
 
-      const { result } = renderHook(() => useMockApi());
-
-      let postResult;
-
-      await act(async () => {
-        postResult = await result.current.postData(testData);
-        vi.advanceTimersByTime(1500);
-      });
-
-      expect(postResult).toEqual({
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
+      expect(response).toEqual({
         success: true,
-        message: "Dados enviados com sucesso!",
+        message: "success on sending data",
         data: {
           ...testData,
           serverOptions: SERVER_OPTIONS,
           createdAt: expect.any(String),
         },
       });
-      expect(result.current.loading).toBe(false);
-      expect(result.current.error).toBeNull();
+    });
+  });
+
+  it("should handle post data error when Math.random() returns low value", async () => {
+    const mockMath = Object.create(global.Math);
+    mockMath.random = () => 0.1; // Less than 0.2 to trigger error
+    global.Math = mockMath;
+
+    const testData: MockOption = {
+      id: "test-1",
+      label: "Test Data",
+      key: "REST",
+    };
+    const { result } = renderHook(() => useMockApi());
+
+    let response: any;
+    await act(async () => {
+      response = await result.current.postData(testData);
+      vi.advanceTimersByTime(1500);
     });
 
-    it("should handle post error", async () => {
-      mockMathRandom.mockReturnValue(0.15); // 20% de chance de erro
-
-      const { result } = renderHook(() => useMockApi());
-
-      let postResult;
-
-      await act(async () => {
-        postResult = await result.current.postData(testData);
-        vi.advanceTimersByTime(1500);
-      });
-
-      expect(postResult).toEqual({
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe("Error on send data");
+      expect(response).toEqual({
         success: false,
-        message: "Falha no envio dos dados",
+        message: "Error on send data",
       });
-      expect(result.current.loading).toBe(false);
-      expect(result.current.error).toBe("Falha no envio dos dados");
-    });
-
-    it("should set loading state during post", async () => {
-      const { result } = renderHook(() => useMockApi());
-
-      // Primeiro completa o fetch inicial
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.loading).toBe(false);
-
-      await act(async () => {
-        const postPromise = result.current.postData(testData);
-
-        expect(result.current.loading).toBe(true);
-        vi.advanceTimersByTime(1500);
-        await postPromise;
-      });
-
-      expect(result.current.loading).toBe(false);
     });
   });
 
-  describe("refetchOptions", () => {
-    it("should refetch options when called", async () => {
-      mockMathRandom.mockReturnValue(0.9);
+  it("should handle unknown error in postData", async () => {
+    // Mock a different type of error
+    vi.spyOn(global, "setTimeout").mockImplementationOnce(() => {
+      throw "Non-Error object";
+    });
 
-      const { result } = renderHook(() => useMockApi());
+    const testData: MockOption = {
+      id: "test-1",
+      label: "Test Data",
+      key: "SESSION_MANAGEMENT",
+    };
+    const { result } = renderHook(() => useMockApi());
 
-      // Primeiro fetch pelo useEffect
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
+    let response: any;
+    await act(async () => {
+      response = await result.current.postData(testData);
+    });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe("Unknow error");
+      expect(response).toEqual({
+        success: false,
+        message: "Unknow error",
       });
+    });
+  });
 
-      // Mock para retornar dados diferentes no refetch
-      const newOptions = [...MOCK_OPTIONS, { id: "5", label: "New Option" }];
+  it("should refetch options using refetchOptions function", async () => {
+    const { result } = renderHook(() => useMockApi());
 
-      vi.spyOn(Math, "random").mockReturnValue(0.9);
+    // Wait for initial fetch
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
 
-      await act(async () => {
-        await result.current.refetchOptions();
-        vi.advanceTimersByTime(1000);
-      });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
+    // Test refetch
+    await act(async () => {
+      const promise = result.current.refetchOptions();
+      vi.advanceTimersByTime(1000);
+      await promise;
+    });
+
+    await waitFor(() => {
       expect(result.current.mockOptions).toEqual(MOCK_OPTIONS);
-    });
-
-    it("should handle errors during refetch", async () => {
-      mockMathRandom.mockReturnValue(0.05); // Erro no refetch
-
-      const { result } = renderHook(() => useMockApi());
-
-      // Primeiro fetch com sucesso
-      mockMathRandom.mockReturnValue(0.9);
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.error).toBeNull();
-
-      // Refetch com erro
-      mockMathRandom.mockReturnValue(0.05);
-      await act(async () => {
-        await result.current.refetchOptions();
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.error).toBe("Falha ao carregar opções");
+      expect(result.current.loading).toBe(false);
     });
   });
 
-  describe("error handling", () => {
-    it("should handle unknown errors", async () => {
-      // Mock para simular um erro desconhecido
-      mockMathRandom.mockImplementation(() => {
-        throw "Unknown error";
-      });
+  it("should set loading state correctly during operations", async () => {
+    const { result } = renderHook(() => useMockApi());
 
-      const { result } = renderHook(() => useMockApi());
+    // Initial loading from useEffect
+    expect(result.current.loading).toBe(true);
 
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.error).toBe("Erro desconhecido");
+    // Complete initial fetch
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
     });
 
-    it("should reset error on successful subsequent call", async () => {
-      // Primeiro com erro
-      mockMathRandom.mockReturnValue(0.05);
-      const { result } = renderHook(() => useMockApi());
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
+    // Test loading during postData
+    await act(async () => {
+      const postPromise = result.current.postData({
+        id: "test",
+        label: "test",
+        key: "REST",
       });
-
-      expect(result.current.error).toBe("Falha ao carregar opções");
-
-      // Depois com sucesso
-      mockMathRandom.mockReturnValue(0.9);
-      await act(async () => {
-        await result.current.refetchOptions();
-        vi.advanceTimersByTime(1000);
-      });
-
-      expect(result.current.error).toBeNull();
+      expect(result.current.loading).toBe(true);
+      vi.advanceTimersByTime(1500);
+      await postPromise;
     });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
   });
 });

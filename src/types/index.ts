@@ -1,4 +1,4 @@
-import { MockIcon } from "@/hooks/UseIMockIcons/useMockIcons";
+import { MockIcon } from "@/hooks/UseMockIcons/useMockIcons";
 
 export interface MockOption {
   id: string;

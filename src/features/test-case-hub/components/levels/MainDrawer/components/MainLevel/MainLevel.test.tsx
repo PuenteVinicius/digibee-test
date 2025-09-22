@@ -4,8 +4,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import MainLevel from "./MainLevel"; // ajuste o caminho
 import { PATH_OPTIONS, PATH_CONDITIONS } from "./constants";
 
-import { MockOption } from "@/hooks/UseMockApi/useMockApi";
 import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
+import { MockOption } from "@/types";
 
 // Mock dos componentes externos
 vi.mock("@/components/shared/Card/Card", () => ({
@@ -62,7 +62,7 @@ vi.mock("@heroui/input", () => ({
           required={isRequired}
         />
       </div>
-    ),
+    )
   ),
   Textarea: vi.fn(
     ({
@@ -84,7 +84,7 @@ vi.mock("@heroui/input", () => ({
           required={isRequired}
         />
       </div>
-    ),
+    )
   ),
 }));
 
@@ -119,11 +119,6 @@ vi.mock("./constants", () => ({
       description: "Condition Desc 1",
       level: CreateLevels.MOCK_CONFIGURATION,
     },
-    {
-      title: "Condition 2",
-      description: "Condition Desc 2",
-      level: CreateLevels.ANOTHER_LEVEL,
-    },
   ],
   Option: {} as any,
 }));
@@ -131,8 +126,8 @@ vi.mock("./constants", () => ({
 describe("MainLevel", () => {
   const mockOnLevelSelect = vi.fn();
   const mockSelectedMockOptions: MockOption[] = [
-    { id: "1", label: "Mock Option 1", svgPath: "path1" },
-    { id: "2", label: "Mock Option 2", svgPath: "path2" },
+    { id: "1", label: "Mock Option 1", key: "REST" },
+    { id: "2", label: "Mock Option 2", key: "JOLT" },
   ];
 
   beforeEach(() => {
@@ -142,9 +137,9 @@ describe("MainLevel", () => {
   const renderComponent = (selectedMockOptions: MockOption[] = []) => {
     return render(
       <MainLevel
-        selectedMockOptions={selectedMockOptions}
+        mockOptions={selectedMockOptions}
         onLevelSelect={mockOnLevelSelect}
-      />,
+      />
     );
   };
 
@@ -203,17 +198,6 @@ describe("MainLevel", () => {
 
     fireEvent.click(switchElement);
     expect(switchElement).toBeChecked();
-  });
-
-  it("should call onLevelSelect when a condition card with level is clicked", () => {
-    renderComponent();
-
-    // Encontrar um card que tenha level definido (Condition 2 no mock)
-    const cards = screen.getAllByTestId("card");
-
-    fireEvent.click(cards[2]); // Condition 2 card
-
-    expect(mockOnLevelSelect).toHaveBeenCalledWith(CreateLevels.ANOTHER_LEVEL);
   });
 
   it("should not call onLevelSelect when card has no level", () => {
@@ -340,20 +324,13 @@ describe("MainLevel", () => {
       // Restaurar mocks
       vi.mocked(PATH_OPTIONS).push(
         { title: "Path Option 1", description: "Description 1" },
-        { title: "Path Option 2", description: "Description 2" },
+        { title: "Path Option 2", description: "Description 2" }
       );
-      vi.mocked(PATH_CONDITIONS).push(
-        {
-          title: "Condition 1",
-          description: "Condition Desc 1",
-          level: CreateLevels.MOCK_CONFIGURATION,
-        },
-        {
-          title: "Condition 2",
-          description: "Condition Desc 2",
-          level: CreateLevels.ANOTHER_LEVEL,
-        },
-      );
+      vi.mocked(PATH_CONDITIONS).push({
+        title: "Condition 1",
+        description: "Condition Desc 1",
+        level: CreateLevels.MOCK_CONFIGURATION,
+      });
     });
   });
 });

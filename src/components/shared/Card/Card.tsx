@@ -1,7 +1,7 @@
 import { CardBody, Card as HeroUiCard } from "@heroui/card";
 import { Plus, MoreVert } from "iconoir-react";
 
-import useMockIcons, { MockIcon } from "@/hooks/UseIMockIcons/useMockIcons";
+import useMockIcons, { MockIcon } from "@/hooks/UseMockIcons/useMockIcons";
 
 export interface CardProps {
   title?: string;

@@ -1,31 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import MockConfigurationDrawer, {
+  MockConfigurationDrawerProps,
+} from "./MockConfigurationDrawer"; // Adjust the import path
+import {
+  CreateLevels,
+  levels,
+} from "@/features/test-case-hub/hooks/levelManager/types";
 
-import Drawer, { DrawerProps } from "./Drawer"; // ajuste o caminho conforme necessário
+// Mock external dependencies
+vi.mock("@heroui/button", () => ({
+  Button: vi.fn(
+    ({ children, className, color, isDisabled, variant, onPress }) => (
+      <button
+        className={className}
+        data-color={color}
+        data-variant={variant}
+        data-disabled={isDisabled}
+        onClick={onPress}
+        data-testid="apply-button"
+      >
+        {children}
+      </button>
+    )
+  ),
+}));
 
-// Mock dos componentes externos
 vi.mock("@heroui/drawer", () => ({
-  Drawer: vi.fn(({ children, isOpen, radius, backdrop, hideCloseButton }) => (
-    <div
-      data-backdrop={backdrop}
-      data-hideclosebutton={hideCloseButton}
-      data-isopen={isOpen}
-      data-radius={radius}
-      data-testid="drawer"
-    >
-      {isOpen && children}
-    </div>
-  )),
-  DrawerContent: vi.fn(({ children }) => (
-    <div data-testid="drawer-content">{children}</div>
-  )),
-  DrawerHeader: vi.fn(({ children, className }) => (
-    <div className={className} data-testid="drawer-header">
+  DrawerBody: vi.fn(({ children, className }) => (
+    <div className={className} data-testid="drawer-body">
       {children}
     </div>
-  )),
-  DrawerBody: vi.fn(({ children }) => (
-    <div data-testid="drawer-body">{children}</div>
   )),
   DrawerFooter: vi.fn(({ children, className }) => (
     <div className={className} data-testid="drawer-footer">
@@ -34,212 +39,229 @@ vi.mock("@heroui/drawer", () => ({
   )),
 }));
 
-vi.mock("@heroui/button", () => ({
-  Button: vi.fn(({ children, onPress, color, variant, className }) => (
-    <button
-      data-color={color}
-      data-testid={
-        className?.includes("w-full") ? "full-width-button" : "button"
-      }
-      data-variant={variant}
-      onClick={onPress}
-    >
-      {children}
-    </button>
-  )),
+vi.mock("iconoir-react", () => ({
+  ArrowLeft: vi.fn(() => <div data-testid="arrow-left-icon" />),
+  Book: vi.fn(() => <div data-testid="book-icon" />),
 }));
 
-// Mock para ícones (simulando ReactElement)
-const MockIcon = ({ name }: { name: string }) => (
-  <div data-testid={`icon-${name}`}>{name} Icon</div>
-);
+vi.mock("@/components/shared/Drawer/Drawer", () => ({
+  default: vi.fn(
+    ({
+      children,
+      description,
+      isOpen,
+      leftIcon,
+      rightIcon,
+      title,
+      onLeftButtonClick,
+      onRightButtonClick,
+    }) => (
+      <div data-testid="drawer" data-is-open={isOpen}>
+        <div data-testid="drawer-title">{title}</div>
+        <div data-testid="drawer-description">{description}</div>
+        <div onClick={onLeftButtonClick} data-testid="left-button">
+          {leftIcon}
+        </div>
+        <div onClick={onRightButtonClick} data-testid="right-button">
+          {rightIcon}
+        </div>
+        {children}
+      </div>
+    )
+  ),
+}));
 
-describe("Drawer Component", () => {
-  const defaultProps: DrawerProps = {
+describe("MockConfigurationDrawer Component", () => {
+  const mockOnApply = vi.fn();
+  const mockNavigateTo = vi.fn();
+  const mockGoBack = vi.fn();
+
+  const defaultProps: MockConfigurationDrawerProps = {
     isOpen: true,
-    title: "Test Drawer",
-    description: "Test description",
-    leftIcon: <MockIcon name="left" />,
-    rightIcon: <MockIcon name="right" />,
-    children: <div data-testid="drawer-content">Drawer Content</div>,
-    mainStep: true,
-    onLeftButtonClick: vi.fn(),
-    onRightButtonClick: vi.fn(),
-    onCancelButtonClick: vi.fn(),
-    onSave: vi.fn(),
-    onApply: vi.fn(),
-  };
-
-  const renderComponent = (props: Partial<DrawerProps> = {}) => {
-    return render(<Drawer {...defaultProps} {...props} />);
+    onApply: mockOnApply,
+    navigateTo: mockNavigateTo,
+    goBack: mockGoBack,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should render drawer when isOpen is true", () => {
-    renderComponent({ isOpen: true });
+  it("should render the drawer with correct title and description", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.getByTestId("drawer")).toBeInTheDocument();
-    expect(screen.getByTestId("drawer-content")).toBeInTheDocument();
+    expect(screen.getByTestId("drawer-title")).toHaveTextContent(
+      levels[CreateLevels.MOCK_CONFIGURATION].title
+    );
+    expect(screen.getByTestId("drawer-description")).toHaveTextContent(
+      levels[CreateLevels.MOCK_CONFIGURATION].description
+    );
   });
 
-  it("should not render drawer content when isOpen is false", () => {
-    renderComponent({ isOpen: false });
+  it("should render left and right icons", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.queryByTestId("drawer-content")).not.toBeInTheDocument();
+    expect(screen.getByTestId("arrow-left-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("book-icon")).toBeInTheDocument();
   });
 
-  it("should render title and description correctly", () => {
-    renderComponent();
+  it("should call goBack when left icon is clicked", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.getByText("Test Drawer")).toBeInTheDocument();
-    expect(screen.getByText("Test description")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("left-button"));
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
   });
 
-  it("should not render description when not provided", () => {
-    renderComponent({ description: undefined });
+  it("should call navigateTo with MAIN level when right icon is clicked", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.getByText("Test Drawer")).toBeInTheDocument();
-    expect(screen.queryByText("Test description")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("right-button"));
+    expect(mockNavigateTo).toHaveBeenCalledWith(CreateLevels.MAIN);
   });
 
-  it("should render left and right icons when provided", () => {
-    renderComponent();
+  it("should render MockConfigurationLevel component", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.getByTestId("icon-left")).toBeInTheDocument();
-    expect(screen.getByTestId("icon-right")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-configuration-level")).toBeInTheDocument();
   });
 
-  it("should not render icons when not provided", () => {
-    renderComponent({ leftIcon: undefined, rightIcon: undefined });
+  it("should update selected mock when MockConfigurationLevel selects an option", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.queryByTestId("icon-left")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("icon-right")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("select-mock-button"));
+
+    // The selected mock should be stored in state and enable the apply button
+    const applyButton = screen.getByTestId("apply-button");
+    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
   });
 
-  it("should call onLeftButtonClick when left icon is clicked", () => {
-    const onLeftButtonClick = vi.fn();
+  it("should have apply button disabled initially", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    renderComponent({ onLeftButtonClick });
-
-    fireEvent.click(screen.getByTestId("icon-left"));
-    expect(onLeftButtonClick).toHaveBeenCalledTimes(1);
+    const applyButton = screen.getByTestId("apply-button");
+    expect(applyButton).toHaveAttribute("data-disabled", "true");
   });
 
-  it("should call onRightButtonClick when right icon is clicked", () => {
-    const onRightButtonClick = vi.fn();
+  it("should enable apply button when a mock is selected", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    renderComponent({ onRightButtonClick });
+    // Select a mock option
+    fireEvent.click(screen.getByTestId("select-mock-button"));
 
-    fireEvent.click(screen.getByTestId("icon-right"));
-    expect(onRightButtonClick).toHaveBeenCalledTimes(1);
+    const applyButton = screen.getByTestId("apply-button");
+    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
   });
 
-  it("should render children content in DrawerBody", () => {
-    renderComponent();
+  it("should call onApply with selected mock when apply button is clicked", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    expect(screen.getByTestId("drawer-body")).toBeInTheDocument();
-    expect(screen.getByText("Drawer Content")).toBeInTheDocument();
+    // Select a mock option
+    fireEvent.click(screen.getByTestId("select-mock-button"));
+
+    // Click apply button
+    fireEvent.click(screen.getByTestId("apply-button"));
+
+    expect(mockOnApply).toHaveBeenCalledTimes(1);
+    expect(mockOnApply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "1",
+        name: "Test Mock",
+        type: "api",
+      })
+    );
   });
 
-  describe("Footer buttons - mainStep true", () => {
-    it("should render Cancel and Save buttons when mainStep is true", () => {
-      renderComponent({ mainStep: true });
+  it("should not call onApply when apply button is disabled", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-      expect(screen.getByText("Cancel")).toBeInTheDocument();
-      expect(screen.getByText("Save")).toBeInTheDocument();
-    });
+    // Try to click apply button without selecting a mock
+    const applyButton = screen.getByTestId("apply-button");
+    fireEvent.click(applyButton);
 
-    it("should call onCancelButtonClick when Cancel button is clicked", () => {
-      const onCancelButtonClick = vi.fn();
-
-      renderComponent({ onCancelButtonClick });
-
-      fireEvent.click(screen.getByText("Cancel"));
-      expect(onCancelButtonClick).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call onSave when Save button is clicked", () => {
-      const onSave = vi.fn();
-
-      renderComponent({ onSave });
-
-      fireEvent.click(screen.getByText("Save"));
-      expect(onSave).toHaveBeenCalledTimes(1);
-    });
+    expect(mockOnApply).not.toHaveBeenCalled();
   });
 
-  describe("Footer buttons - mainStep false", () => {
-    it("should render Apply button when mainStep is false", () => {
-      renderComponent({ mainStep: false });
+  it("should apply correct CSS classes to drawer body and footer", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-      expect(screen.getByText("Apply")).toBeInTheDocument();
-      expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
-      expect(screen.queryByText("Save")).not.toBeInTheDocument();
-    });
+    const drawerBody = screen.getByTestId("drawer-body");
+    const drawerFooter = screen.getByTestId("drawer-footer");
 
-    it("should call onApply when Apply button is clicked", () => {
-      const onApply = vi.fn();
-
-      renderComponent({ mainStep: false, onApply });
-
-      fireEvent.click(screen.getByText("Apply"));
-      expect(onApply).toHaveBeenCalledTimes(1);
-    });
-
-    it("should render full width button when mainStep is false", () => {
-      renderComponent({ mainStep: false });
-
-      expect(screen.getByTestId("full-width-button")).toBeInTheDocument();
-    });
+    expect(drawerBody).toHaveClass("py-0 gap-0 px-0");
+    expect(drawerFooter).toHaveClass("flex w-full justify-between");
   });
 
-  it("should apply correct CSS classes to header", () => {
-    renderComponent();
+  it("should apply correct styling to apply button", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    const header = screen.getByTestId("drawer-header");
+    const applyButton = screen.getByTestId("apply-button");
 
-    expect(header).toHaveClass("flex");
-    expect(header).toHaveClass("flex-col");
-    expect(header).toHaveClass("gap-1");
+    expect(applyButton).toHaveAttribute("data-color", "primary");
+    expect(applyButton).toHaveAttribute("data-variant", "bordered");
+    expect(applyButton).toHaveClass("w-full");
   });
 
-  it("should apply correct CSS classes to footer", () => {
-    renderComponent();
+  it("should not render content when isOpen is false", () => {
+    render(<MockConfigurationDrawer {...defaultProps} isOpen={false} />);
 
-    const footer = screen.getByTestId("drawer-footer");
-
-    expect(footer).toHaveClass("flex");
-    expect(footer).toHaveClass("w-full");
-    expect(footer).toHaveClass("justify-between");
+    expect(screen.getByTestId("drawer")).toHaveAttribute(
+      "data-is-open",
+      "false"
+    );
   });
 
-  it("should pass correct props to HeroUiDrawer", () => {
-    renderComponent();
+  it("should handle multiple mock selections correctly", () => {
+    const { rerender } = render(<MockConfigurationDrawer {...defaultProps} />);
+
+    // Select first mock
+    fireEvent.click(screen.getByTestId("select-mock-button"));
+
+    // Re-render with updated state
+    rerender(<MockConfigurationDrawer {...defaultProps} />);
+
+    // Apply should be enabled
+    const applyButton = screen.getByTestId("apply-button");
+    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
+
+    // Click apply
+    fireEvent.click(applyButton);
+    expect(mockOnApply).toHaveBeenCalledTimes(1);
+  });
+
+  it("should pass correct props to Drawer component", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
     const drawer = screen.getByTestId("drawer");
+    expect(drawer).toBeInTheDocument();
 
-    expect(drawer).toHaveAttribute("data-isopen", "true");
-    expect(drawer).toHaveAttribute("data-radius", "none");
-    expect(drawer).toHaveAttribute("data-backdrop", "transparent");
-    expect(drawer).toHaveAttribute("data-hideclosebutton", "true");
+    // Verify Drawer was called with correct props
+    const DrawerComponent = vi.mocked(
+      require("@/components/shared/Drawer/Drawer").default
+    );
+    expect(DrawerComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isOpen: true,
+        title: levels[CreateLevels.MOCK_CONFIGURATION].title,
+        description: levels[CreateLevels.MOCK_CONFIGURATION].description,
+        onLeftButtonClick: expect.any(Function),
+        onRightButtonClick: expect.any(Function),
+      }),
+      expect.anything()
+    );
   });
 
-  it("should render correct typography for title and description", () => {
-    renderComponent();
+  it("should pass correct props to MockConfigurationLevel component", () => {
+    render(<MockConfigurationDrawer {...defaultProps} />);
 
-    const title = screen.getByText("Test Drawer");
-
-    expect(title).toHaveClass("text-2xl");
-    expect(title).toHaveClass("font-semibold");
-
-    const description = screen.getByText("Test description");
-
-    expect(description).toHaveClass("font-light");
-    expect(description).toHaveClass("text-sm");
-    expect(description).toHaveClass("text-gray-500");
-    expect(description).toHaveClass("leading-5");
+    const MockConfigurationLevelComponent = vi.mocked(
+      require("@/features/test-case-hub/components/levels/MockConfigurationDrawer/components/MockConfigurationLevel/MockConfigurationLevel")
+        .default
+    );
+    expect(MockConfigurationLevelComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onSelectedMockOption: expect.any(Function),
+      }),
+      expect.anything()
+    );
   });
 });

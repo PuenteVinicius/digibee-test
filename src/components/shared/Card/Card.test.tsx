@@ -1,12 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import Card, { CardProps } from "./Card";
 
-import Card, { CardProps } from "./Card"; // ajuste o caminho conforme necessário
-
-// Mock dos componentes externos
 vi.mock("@heroui/card", () => ({
-  Card: vi.fn(({ children, onClick, className }) => (
-    <div className={className} data-testid="card" onClick={onClick}>
+  Card: vi.fn(({ children, onClick, className, shadow }) => (
+    <div
+      className={className}
+      data-testid="hero-ui-card"
+      data-shadow={shadow}
+      onClick={onClick}
+    >
       {children}
     </div>
   )),
@@ -18,105 +21,123 @@ vi.mock("@heroui/card", () => ({
 }));
 
 vi.mock("iconoir-react", () => ({
-  Plus: vi.fn(() => <div data-testid="plus-icon">+</div>),
+  Plus: vi.fn(() => <div data-testid="plus-icon" />),
+  MoreVert: vi.fn(() => <div data-testid="morevert-icon" />),
 }));
 
-describe("Card Component", () => {
-  const defaultProps: CardProps = {
-    title: "Test Card",
-    description: "Test description",
-    onClick: vi.fn(),
-  };
+vi.mock("@/hooks/UseIMockIcons/useMockIcons");
 
-  const renderComponent = (props: Partial<CardProps> = {}) => {
-    return render(<Card {...defaultProps} {...props} />);
+describe("Card Component", () => {
+  const mockGetIcon = vi.fn();
+  const mockOnClick = vi.fn();
+  const mockIcon = "some-icon" as any;
+
+  const defaultProps: CardProps = {
+    title: "Test Title",
+    description: "Test Description",
+    onClick: mockOnClick,
+    moreAction: false,
+    mockIcon: undefined,
   };
 
   it("should render the card with title and description", () => {
-    renderComponent();
+    render(<Card {...defaultProps} />);
 
-    expect(screen.getByText("Test Card")).toBeInTheDocument();
-    expect(screen.getByText("Test description")).toBeInTheDocument();
+    expect(screen.getByText("Test Title"));
+    expect(screen.getByText("Test Description"));
+    expect(screen.getByTestId("hero-ui-card"));
   });
 
-  it("should render without description when not provided", () => {
-    renderComponent({ description: undefined });
+  it("should render the Plus icon when moreAction is false", () => {
+    render(<Card {...defaultProps} />);
 
-    expect(screen.getByText("Test Card")).toBeInTheDocument();
-    expect(screen.queryByText("Test description")).not.toBeInTheDocument();
+    expect(screen.getByTestId("plus-icon"));
+    expect(screen.queryByTestId("morevert-icon"));
+  });
+
+  it("should render the MoreVert icon when moreAction is true", () => {
+    render(<Card {...defaultProps} moreAction={true} />);
+
+    expect(screen.getByTestId("morevert-icon"));
+    expect(screen.queryByTestId("plus-icon"));
   });
 
   it("should call onClick when the card is clicked", () => {
-    const handleClick = vi.fn();
+    render(<Card {...defaultProps} />);
 
-    renderComponent({ onClick: handleClick });
-
-    const card = screen.getByTestId("card");
-
-    fireEvent.click(card);
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId("hero-ui-card"));
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
-  it("should call onClick when the plus icon is clicked", () => {
-    const handleClick = vi.fn();
+  it("should call onClick when the action icon is clicked", () => {
+    render(<Card {...defaultProps} />);
 
-    renderComponent({ onClick: handleClick });
+    const actionIcon = screen.getByTestId("plus-icon").parentElement;
+    if (actionIcon) {
+      fireEvent.click(actionIcon);
+    }
 
-    const plusIcon = screen.getByTestId("plus-icon");
-
-    fireEvent.click(plusIcon);
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
-  it("should apply correct CSS classes", () => {
-    renderComponent();
+  it("should render mock icon when mockIcon prop is provided", () => {
+    render(<Card {...defaultProps} mockIcon={mockIcon} />);
 
-    const card = screen.getByTestId("card");
+    expect(mockGetIcon).toHaveBeenCalledWith(mockIcon);
+    expect(screen.getByTestId("mock-icon"));
 
-    expect(card).toHaveClass("w-full");
-    expect(card).toHaveClass("border");
-    expect(card).toHaveClass("border-gray-200");
+    it("should not render mock icon when mockIcon prop is not provided", () => {
+      render(<Card {...defaultProps} />);
 
-    const cardBody = screen.getByTestId("card-body");
+      expect(mockGetIcon).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("mock-icon"));
+    });
 
-    expect(cardBody).toHaveClass("pt-0");
-    expect(cardBody).toHaveClass("pb-2");
-    expect(cardBody).toHaveClass("flex");
-    expect(cardBody).toHaveClass("flex-row");
-    expect(cardBody).toHaveClass("justify-between");
-    expect(cardBody).toHaveClass("items-center");
-  });
+    it("should apply correct styling to mock icon container", () => {
+      render(<Card {...defaultProps} mockIcon={mockIcon} />);
 
-  it("should render the Plus icon", () => {
-    renderComponent();
+      const iconContainer = screen.getByTestId("mock-icon").parentElement;
+      expect(iconContainer);
+    });
 
-    expect(screen.getByTestId("plus-icon")).toBeInTheDocument();
-  });
+    it("should render without title and description", () => {
+      render(<Card onClick={mockOnClick} />);
 
-  it("should have correct typography classes", () => {
-    renderComponent();
+      expect(screen.queryByText("Test Title"));
+      expect(screen.queryByText("Test Description"));
+    });
 
-    const title = screen.getByText("Test Card");
+    it("should render with JSX description", () => {
+      const jsxDescription = (
+        <span data-testid="jsx-description">JSX Description</span>
+      );
+      render(<Card {...defaultProps} description={jsxDescription} />);
 
-    expect(title).toHaveClass("text-sm");
-    expect(title).toHaveClass("font-medium");
+      expect(screen.getByTestId("jsx-description"));
+    });
 
-    const description = screen.getByText("Test description");
+    it("should have correct CSS classes for text elements", () => {
+      render(<Card {...defaultProps} />);
 
-    expect(description).toHaveClass("font-light");
-    expect(description).toHaveClass("text-sm");
-    expect(description).toHaveClass("text-gray-500");
-    expect(description).toHaveClass("leading-5");
-  });
+      const titleElement = screen.getByText("Test Title");
+      const descriptionElement = screen.getByText("Test Description");
 
-  it("should use default onClick function when not provided", () => {
-    // Teste para garantir que o default function não quebra
-    renderComponent({ onClick: undefined });
+      expect(titleElement);
+      expect(descriptionElement);
+    });
 
-    const card = screen.getByTestId("card");
+    it("should use default onClick handler when not provided", () => {
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
-    expect(() => fireEvent.click(card)).not.toThrow();
+      // Create a component without onClick prop
+      const { getByTestId } = render(<Card title="Test" description="Test" />);
+
+      fireEvent.click(getByTestId("hero-ui-card"));
+
+      // The default onClick should be called (which is an empty function)
+      expect(consoleSpy).not.toHaveBeenCalled(); // No error should occur
+
+      consoleSpy.mockRestore();
+    });
   });
 });

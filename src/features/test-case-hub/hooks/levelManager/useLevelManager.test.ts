@@ -1,201 +1,157 @@
-import { describe, it, expect } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import useLevelManager from './useLevelManager';
+import { CreateLevels } from './types';
 
-import useLevelManager from "./useLevelManager";
+describe('useLevelManager Hook', () => {
+  const initialLevel = CreateLevels.MAIN;
 
-// Enum de exemplo (caso não esteja definido no seu arquivo)
-enum CreateLevels {
-  MAIN = "MAIN",
-  STEP_1 = "STEP_1",
-  STEP_2 = "STEP_2",
-  STEP_3 = "STEP_3",
-  CONFIRMATION = "CONFIRMATION",
-}
-
-describe("useLevelManager", () => {
-  const defaultProps = {
-    initialLevel: CreateLevels.MAIN,
-  };
-
-  const renderHookWithProps = (
-    props: Partial<{ initialLevel: CreateLevels }> = {},
-  ) => {
-    return renderHook(() => useLevelManager({ ...defaultProps, ...props }));
-  };
-
-  it("should initialize with correct default values", () => {
-    const { result } = renderHookWithProps();
-
-    expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
-    expect(result.current.history).toEqual([CreateLevels.MAIN]);
-    expect(result.current.canGoBack).toBe(false);
-    expect(typeof result.current.navigateTo).toBe("function");
-    expect(typeof result.current.goBack).toBe("function");
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("should accept custom initial level", () => {
-    const { result } = renderHookWithProps({
-      initialLevel: CreateLevels.STEP_1,
-    });
+  it('should initialize with correct initial level', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_1);
-    expect(result.current.history).toEqual([CreateLevels.STEP_1]);
+    expect(result.current.currentLevel).toBe(initialLevel);
+    expect(result.current.history).toEqual([initialLevel]);
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it("should navigate to a new level and update history", () => {
-    const { result } = renderHookWithProps();
+  it('should navigate to a new level and update history', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_1);
+    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
     expect(result.current.history).toEqual([
-      CreateLevels.MAIN,
-      CreateLevels.STEP_1,
+      initialLevel,
+      CreateLevels.MOCK_CONFIGURATION
     ]);
     expect(result.current.canGoBack).toBe(true);
   });
 
-  it("should handle multiple navigations correctly", () => {
-    const { result } = renderHookWithProps();
+  it('should navigate to multiple levels and maintain history', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_2);
-    });
 
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_3);
-    });
-
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_3);
     expect(result.current.history).toEqual([
-      CreateLevels.MAIN,
-      CreateLevels.STEP_1,
-      CreateLevels.STEP_2,
-      CreateLevels.STEP_3,
+      initialLevel,
+      CreateLevels.MOCK_CONFIGURATION,
     ]);
     expect(result.current.canGoBack).toBe(true);
   });
 
-  it("should go back to previous level", () => {
-    const { result } = renderHookWithProps();
-
-    // Navegar para alguns níveis
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
-    });
+  it('should go back to previous level', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_2);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
-    // Voltar um nível
     act(() => {
       result.current.goBack();
     });
 
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_1);
+    expect(result.current.currentLevel).toBe(initialLevel);
+    expect(result.current.history).toEqual([initialLevel]);
+    expect(result.current.canGoBack).toBe(false);
+  });
+
+  it('should go back multiple levels correctly', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
+
+    act(() => {
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
+    });
+
+    act(() => {
+      result.current.goBack();
+    });
+
+    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
     expect(result.current.history).toEqual([
-      CreateLevels.MAIN,
-      CreateLevels.STEP_1,
+      initialLevel,
+      CreateLevels.MOCK_CONFIGURATION
     ]);
-    expect(result.current.canGoBack).toBe(true);
-  });
-
-  it("should handle multiple goBack calls", () => {
-    const { result } = renderHookWithProps();
-
-    // Navegar para vários níveis
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
-    });
-
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_2);
-    });
-
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_3);
-    });
-
-    // Voltar múltiplas vezes
-    act(() => {
-      result.current.goBack();
-    });
-
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_2);
 
     act(() => {
       result.current.goBack();
     });
 
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_1);
-
-    act(() => {
-      result.current.goBack();
-    });
-
-    expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
-    expect(result.current.history).toEqual([CreateLevels.MAIN]);
+    expect(result.current.currentLevel).toBe(initialLevel);
+    expect(result.current.history).toEqual([initialLevel]);
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it("should not go back when history has only one level", () => {
-    const { result } = renderHookWithProps();
+  it('should not go back when history has only one level', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
-    // Tentar voltar do nível inicial
+    const initialHistory = [...result.current.history];
+
     act(() => {
       result.current.goBack();
     });
 
-    // Nada deve mudar
-    expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
-    expect(result.current.history).toEqual([CreateLevels.MAIN]);
+    expect(result.current.currentLevel).toBe(initialLevel);
+    expect(result.current.history).toEqual(initialHistory);
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it("should not allow going back beyond initial level", () => {
-    const { result } = renderHookWithProps();
+  it('should handle multiple navigate and goBack operations', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
-    // Navegar e voltar
+    // Navigate to level 2
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
-
-    act(() => {
-      result.current.goBack();
-    });
-
-    // Tentar voltar novamente (não deve fazer nada)
+    // Go back to level 2
     act(() => {
       result.current.goBack();
     });
+    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
 
-    expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
-    expect(result.current.history).toEqual([CreateLevels.MAIN]);
-    expect(result.current.canGoBack).toBe(false);
+
+    // Go back to level 2 (history should be truncated)
+    act(() => {
+      result.current.goBack();
+    });
+    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
+
+    expect(result.current.history).toEqual([
+      initialLevel,
+      CreateLevels.MOCK_CONFIGURATION
+    ]);
   });
 
-  it("should update canGoBack correctly", () => {
-    const { result } = renderHookWithProps();
+  it('should use different initial level when provided', () => {
+    const differentInitialLevel = CreateLevels.MOCK_CONFIGURATION;
+    const { result } = renderHook(() => 
+      useLevelManager({ initialLevel: differentInitialLevel })
+    );
 
-    // Inicialmente não pode voltar
+    expect(result.current.currentLevel).toBe(differentInitialLevel);
+    expect(result.current.history).toEqual([differentInitialLevel]);
+  });
+
+  it('should maintain canGoBack state correctly', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
+
     expect(result.current.canGoBack).toBe(false);
 
-    // Navegar - agora pode voltar
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
     expect(result.current.canGoBack).toBe(true);
 
-    // Voltar - não pode mais voltar
     act(() => {
       result.current.goBack();
     });
@@ -203,75 +159,56 @@ describe("useLevelManager", () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it("should handle navigation to the same level multiple times", () => {
-    const { result } = renderHookWithProps();
+  it('should handle rapid consecutive navigations', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
-    act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1); // Mesmo nível
-    });
-
-    expect(result.current.currentLevel).toBe(CreateLevels.STEP_1);
     expect(result.current.history).toEqual([
-      CreateLevels.MAIN,
-      CreateLevels.STEP_1,
-      CreateLevels.STEP_1, // Duplicado no histórico
+      initialLevel,
+      CreateLevels.MOCK_CONFIGURATION,
     ]);
+    expect(result.current.canGoBack).toBe(true);
   });
 
-  it("should be memoized correctly (functions should not change)", () => {
-    const { result, rerender } = renderHookWithProps();
+  it('should handle rapid consecutive goBack operations', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
-    const initialNavigateTo = result.current.navigateTo;
-    const initialGoBack = result.current.goBack;
-
-    // Rerender com as mesmas props
-    rerender();
-
-    expect(result.current.navigateTo).toBe(initialNavigateTo);
-    expect(result.current.goBack).toBe(initialGoBack);
-
-    // Navegar para outro nível
     act(() => {
-      result.current.navigateTo(CreateLevels.STEP_1);
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
-    // As funções ainda devem ser as mesmas (memoizadas)
-    expect(result.current.navigateTo).toBe(initialNavigateTo);
-    expect(result.current.goBack).toBe(initialGoBack);
+    act(() => {
+      result.current.goBack();
+      result.current.goBack();
+      result.current.goBack();
+    });
+
+    expect(result.current.currentLevel).toBe(initialLevel);
+    expect(result.current.history).toEqual([initialLevel]);
+    expect(result.current.canGoBack).toBe(false);
   });
 
-  describe("edge cases", () => {
-    it("should handle empty history edge case", () => {
-      // Teste para garantir que não quebra com histórico vazio
-      // Isso não deveria acontecer, mas é bom testar
-      const { result } = renderHookWithProps();
+  it('should not mutate history array directly', () => {
+    const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
-      // Simular histórico vazio (situação anômala)
-      act(() => {
-        // @ts-ignore - forçando situação anômala para teste
-        result.current.history = [];
-        result.current.goBack();
-      });
+    const initialHistory = result.current.history;
 
-      // O hook deve ser resiliente e não quebrar
-      expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
+    act(() => {
+      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
 
-    it("should handle navigation with undefined or invalid levels", () => {
-      const { result } = renderHookWithProps();
-
-      // @ts-ignore - testando com nível inválido
-      act(() => {
-        result.current.navigateTo("INVALID_LEVEL");
-      });
-
-      // Deve aceitar qualquer string como nível
-      expect(result.current.currentLevel).toBe("INVALID_LEVEL");
-      expect(result.current.history).toContain("INVALID_LEVEL");
-    });
+    expect(result.current.history).not.toBe(initialHistory);
+    expect(initialHistory).toEqual([initialLevel]);
   });
-});
+
+  it('should handle undefined initial level by using default', () => {
+    // @ts-ignore - Testing undefined case
+    const { result } = renderHook(() => useLevelManager({}));
+
+    expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
+    expect(result.current.history).toEqual([CreateLevels.MAIN]);
+  });
+})});
