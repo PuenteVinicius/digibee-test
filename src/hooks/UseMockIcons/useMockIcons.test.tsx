@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { ReactElement } from "react";
+
 import useMockIcons, { MockIcon } from "./useMockIcons";
 
 // Mock the SVG imports
@@ -60,6 +61,7 @@ describe("useMockIcons", () => {
 
     mockTypes.forEach((type) => {
       const icon = result.current.getIcon(type);
+
       expect(icon).toBeDefined();
     });
   });
@@ -95,6 +97,7 @@ describe("useMockIcons TypeScript compatibility", () => {
 
     validTypes.forEach((type) => {
       const icon = result.current.getIcon(type);
+
       expect(icon).toBeDefined();
     });
   });

@@ -36,8 +36,7 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        plugins: [
-        ],
+        plugins: [],
         test: {
           name: "storybook",
           browser: {

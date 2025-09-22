@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import MockConfigurationDrawer, {
   MockConfigurationDrawerProps,
 } from "./MockConfigurationDrawer"; // Adjust the import path
+
 import {
   CreateLevels,
   levels,
@@ -15,14 +17,14 @@ vi.mock("@heroui/button", () => ({
       <button
         className={className}
         data-color={color}
-        data-variant={variant}
         data-disabled={isDisabled}
-        onClick={onPress}
         data-testid="apply-button"
+        data-variant={variant}
+        onClick={onPress}
       >
         {children}
       </button>
-    )
+    ),
   ),
 }));
 
@@ -56,18 +58,18 @@ vi.mock("@/components/shared/Drawer/Drawer", () => ({
       onLeftButtonClick,
       onRightButtonClick,
     }) => (
-      <div data-testid="drawer" data-is-open={isOpen}>
+      <div data-is-open={isOpen} data-testid="drawer">
         <div data-testid="drawer-title">{title}</div>
         <div data-testid="drawer-description">{description}</div>
-        <div onClick={onLeftButtonClick} data-testid="left-button">
+        <div data-testid="left-button" onClick={onLeftButtonClick}>
           {leftIcon}
         </div>
-        <div onClick={onRightButtonClick} data-testid="right-button">
+        <div data-testid="right-button" onClick={onRightButtonClick}>
           {rightIcon}
         </div>
         {children}
       </div>
-    )
+    ),
   ),
 }));
 
@@ -91,10 +93,10 @@ describe("MockConfigurationDrawer Component", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
 
     expect(screen.getByTestId("drawer-title")).toHaveTextContent(
-      levels[CreateLevels.MOCK_CONFIGURATION].title
+      levels[CreateLevels.MOCK_CONFIGURATION].title,
     );
     expect(screen.getByTestId("drawer-description")).toHaveTextContent(
-      levels[CreateLevels.MOCK_CONFIGURATION].description
+      levels[CreateLevels.MOCK_CONFIGURATION].description,
     );
   });
 
@@ -132,6 +134,7 @@ describe("MockConfigurationDrawer Component", () => {
 
     // The selected mock should be stored in state and enable the apply button
     const applyButton = screen.getByTestId("apply-button");
+
     expect(applyButton).not.toHaveAttribute("data-disabled", "true");
   });
 
@@ -139,6 +142,7 @@ describe("MockConfigurationDrawer Component", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
 
     const applyButton = screen.getByTestId("apply-button");
+
     expect(applyButton).toHaveAttribute("data-disabled", "true");
   });
 
@@ -149,6 +153,7 @@ describe("MockConfigurationDrawer Component", () => {
     fireEvent.click(screen.getByTestId("select-mock-button"));
 
     const applyButton = screen.getByTestId("apply-button");
+
     expect(applyButton).not.toHaveAttribute("data-disabled", "true");
   });
 
@@ -167,7 +172,7 @@ describe("MockConfigurationDrawer Component", () => {
         id: "1",
         name: "Test Mock",
         type: "api",
-      })
+      }),
     );
   });
 
@@ -176,6 +181,7 @@ describe("MockConfigurationDrawer Component", () => {
 
     // Try to click apply button without selecting a mock
     const applyButton = screen.getByTestId("apply-button");
+
     fireEvent.click(applyButton);
 
     expect(mockOnApply).not.toHaveBeenCalled();
@@ -206,7 +212,7 @@ describe("MockConfigurationDrawer Component", () => {
 
     expect(screen.getByTestId("drawer")).toHaveAttribute(
       "data-is-open",
-      "false"
+      "false",
     );
   });
 
@@ -221,6 +227,7 @@ describe("MockConfigurationDrawer Component", () => {
 
     // Apply should be enabled
     const applyButton = screen.getByTestId("apply-button");
+
     expect(applyButton).not.toHaveAttribute("data-disabled", "true");
 
     // Click apply
@@ -232,12 +239,14 @@ describe("MockConfigurationDrawer Component", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
 
     const drawer = screen.getByTestId("drawer");
+
     expect(drawer).toBeInTheDocument();
 
     // Verify Drawer was called with correct props
     const DrawerComponent = vi.mocked(
-      require("@/components/shared/Drawer/Drawer").default
+      require("@/components/shared/Drawer/Drawer").default,
     );
+
     expect(DrawerComponent).toHaveBeenCalledWith(
       expect.objectContaining({
         isOpen: true,
@@ -246,7 +255,7 @@ describe("MockConfigurationDrawer Component", () => {
         onLeftButtonClick: expect.any(Function),
         onRightButtonClick: expect.any(Function),
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -255,13 +264,14 @@ describe("MockConfigurationDrawer Component", () => {
 
     const MockConfigurationLevelComponent = vi.mocked(
       require("@/features/test-case-hub/components/levels/MockConfigurationDrawer/components/MockConfigurationLevel/MockConfigurationLevel")
-        .default
+        .default,
     );
+
     expect(MockConfigurationLevelComponent).toHaveBeenCalledWith(
       expect.objectContaining({
         onSelectedMockOption: expect.any(Function),
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 });

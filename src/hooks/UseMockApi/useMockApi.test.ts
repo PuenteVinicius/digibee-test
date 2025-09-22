@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
+
+import { useMockApi } from "./useMockApi";
+
 import { MOCK_OPTIONS, SERVER_OPTIONS } from "@/constants";
 import { MockOption } from "@/types";
-import { useMockApi } from "./useMockApi";
 
 // Mock the constants
 vi.mock("@/constants", () => ({
@@ -52,6 +54,7 @@ describe("useMockApi", () => {
   it("should handle fetch error when Math.random() returns low value", async () => {
     // Force Math.random to return a value less than 0.1 to trigger error
     const mockMath = Object.create(global.Math);
+
     mockMath.random = () => 0.05;
     global.Math = mockMath;
 
@@ -82,6 +85,7 @@ describe("useMockApi", () => {
     // Test refetch function
     await act(async () => {
       const promise = result.current.fetchMockOptions();
+
       vi.advanceTimersByTime(1000);
       await promise;
     });
@@ -94,6 +98,7 @@ describe("useMockApi", () => {
 
   it("should handle error in fetchMockOptions", async () => {
     const mockMath = Object.create(global.Math);
+
     mockMath.random = () => 0.05;
     global.Math = mockMath;
 
@@ -123,6 +128,7 @@ describe("useMockApi", () => {
     const { result } = renderHook(() => useMockApi());
 
     let response: any;
+
     await act(async () => {
       response = await result.current.postData(testData);
       vi.advanceTimersByTime(1500);
@@ -145,6 +151,7 @@ describe("useMockApi", () => {
 
   it("should handle post data error when Math.random() returns low value", async () => {
     const mockMath = Object.create(global.Math);
+
     mockMath.random = () => 0.1; // Less than 0.2 to trigger error
     global.Math = mockMath;
 
@@ -156,6 +163,7 @@ describe("useMockApi", () => {
     const { result } = renderHook(() => useMockApi());
 
     let response: any;
+
     await act(async () => {
       response = await result.current.postData(testData);
       vi.advanceTimersByTime(1500);
@@ -185,6 +193,7 @@ describe("useMockApi", () => {
     const { result } = renderHook(() => useMockApi());
 
     let response: any;
+
     await act(async () => {
       response = await result.current.postData(testData);
     });
@@ -212,6 +221,7 @@ describe("useMockApi", () => {
     // Test refetch
     await act(async () => {
       const promise = result.current.refetchOptions();
+
       vi.advanceTimersByTime(1000);
       await promise;
     });
@@ -242,6 +252,7 @@ describe("useMockApi", () => {
         label: "test",
         key: "REST",
       });
+
       expect(result.current.loading).toBe(true);
       vi.advanceTimersByTime(1500);
       await postPromise;

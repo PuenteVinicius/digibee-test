@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import TestCaseDrawer, { DrawerProps } from "./TestCaseDrawer"; // Adjust the import path
 import { addToast } from "@heroui/react";
+
+import TestCaseDrawer, { DrawerProps } from "./TestCaseDrawer"; // Adjust the import path
 import { CreateLevels } from "./hooks/levelManager/types";
 
 // Mock external dependencies
@@ -41,7 +42,7 @@ describe("TestCaseDrawer Component", () => {
 
     fireEvent.click(screen.getByTestId("navigate-to-mock"));
     expect(mockNavigateTo).toHaveBeenCalledWith(
-      CreateLevels.MOCK_CONFIGURATION
+      CreateLevels.MOCK_CONFIGURATION,
     );
   });
 

@@ -62,7 +62,7 @@ vi.mock("@heroui/input", () => ({
           required={isRequired}
         />
       </div>
-    )
+    ),
   ),
   Textarea: vi.fn(
     ({
@@ -84,7 +84,7 @@ vi.mock("@heroui/input", () => ({
           required={isRequired}
         />
       </div>
-    )
+    ),
   ),
 }));
 
@@ -139,7 +139,7 @@ describe("MainLevel", () => {
       <MainLevel
         mockOptions={selectedMockOptions}
         onLevelSelect={mockOnLevelSelect}
-      />
+      />,
     );
   };
 
@@ -324,7 +324,7 @@ describe("MainLevel", () => {
       // Restaurar mocks
       vi.mocked(PATH_OPTIONS).push(
         { title: "Path Option 1", description: "Description 1" },
-        { title: "Path Option 2", description: "Description 2" }
+        { title: "Path Option 2", description: "Description 2" },
       );
       vi.mocked(PATH_CONDITIONS).push({
         title: "Condition 1",

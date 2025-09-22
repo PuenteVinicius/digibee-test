@@ -1,16 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import useLevelManager from './useLevelManager';
-import { CreateLevels } from './types';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
 
-describe('useLevelManager Hook', () => {
+import useLevelManager from "./useLevelManager";
+import { CreateLevels } from "./types";
+
+describe("useLevelManager Hook", () => {
   const initialLevel = CreateLevels.MAIN;
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should initialize with correct initial level', () => {
+  it("should initialize with correct initial level", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     expect(result.current.currentLevel).toBe(initialLevel);
@@ -18,7 +19,7 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it('should navigate to a new level and update history', () => {
+  it("should navigate to a new level and update history", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
@@ -28,12 +29,12 @@ describe('useLevelManager Hook', () => {
     expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
     expect(result.current.history).toEqual([
       initialLevel,
-      CreateLevels.MOCK_CONFIGURATION
+      CreateLevels.MOCK_CONFIGURATION,
     ]);
     expect(result.current.canGoBack).toBe(true);
   });
 
-  it('should go back to previous level', () => {
+  it("should go back to previous level", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
@@ -49,7 +50,7 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it('should not go back when history has only one level', () => {
+  it("should not go back when history has only one level", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     const initialHistory = [...result.current.history];
@@ -63,17 +64,17 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it('should use different initial level when provided', () => {
+  it("should use different initial level when provided", () => {
     const differentInitialLevel = CreateLevels.MOCK_CONFIGURATION;
-    const { result } = renderHook(() => 
-      useLevelManager({ initialLevel: differentInitialLevel })
+    const { result } = renderHook(() =>
+      useLevelManager({ initialLevel: differentInitialLevel }),
     );
 
     expect(result.current.currentLevel).toBe(differentInitialLevel);
     expect(result.current.history).toEqual([differentInitialLevel]);
   });
 
-  it('should maintain canGoBack state correctly', () => {
+  it("should maintain canGoBack state correctly", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     expect(result.current.canGoBack).toBe(false);
@@ -91,7 +92,7 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it('should handle rapid consecutive navigations', () => {
+  it("should handle rapid consecutive navigations", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
@@ -105,7 +106,7 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(true);
   });
 
-  it('should handle rapid consecutive goBack operations', () => {
+  it("should handle rapid consecutive goBack operations", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
@@ -123,7 +124,7 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(false);
   });
 
-  it('should not mutate history array directly', () => {
+  it("should not mutate history array directly", () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     const initialHistory = result.current.history;
@@ -136,7 +137,7 @@ describe('useLevelManager Hook', () => {
     expect(initialHistory).toEqual([initialLevel]);
   });
 
-  it('should handle undefined initial level by using default', () => {
+  it("should handle undefined initial level by using default", () => {
     // @ts-ignore - Testing undefined case
     const { result } = renderHook(() => useLevelManager({}));
 

@@ -1,8 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MockOption, ServerOption } from "@/types";
+
 import MockConfigurationLevel from "./MockConfigurationLevel";
+
+import { MockOption, ServerOption } from "@/types";
 
 // Mock dependencies
 vi.mock("@/hooks/UseMockApi/useMockApi", () => ({
@@ -15,7 +17,7 @@ vi.mock("@/hooks/UseIMockIcons/useMockIcons", () => ({
 
 vi.mock("@/components/shared/SkeletonCard/SkeletonCard", () => ({
   default: vi.fn(({ className }) => (
-    <div data-testid="skeleton-card" className={className}>
+    <div className={className} data-testid="skeleton-card">
       Skeleton Card
     </div>
   )),
@@ -23,7 +25,7 @@ vi.mock("@/components/shared/SkeletonCard/SkeletonCard", () => ({
 
 vi.mock("@/components/shared/MockEmptyState/MockEmptyState", () => ({
   default: vi.fn(({ className }) => (
-    <div data-testid="mock-empty-state" className={className}>
+    <div className={className} data-testid="mock-empty-state">
       Mock Empty State
     </div>
   )),
@@ -31,7 +33,7 @@ vi.mock("@/components/shared/MockEmptyState/MockEmptyState", () => ({
 
 vi.mock("@heroui/select", () => ({
   Select: vi.fn(({ children, isLoading, startContent, ...props }) => (
-    <div data-testid="select" data-loading={isLoading} {...props}>
+    <div data-loading={isLoading} data-testid="select" {...props}>
       {startContent}
       <select data-testid="select-element">{children}</select>
     </div>
@@ -87,7 +89,7 @@ describe("MockConfigurationLevel", () => {
       <MockConfigurationLevel
         onSelectedMockOption={mockOnSelectedMockOption}
         {...props}
-      />
+      />,
     );
   };
 
@@ -96,6 +98,7 @@ describe("MockConfigurationLevel", () => {
 
     // Select a mock option to trigger server options loading
     const mockOption = screen.getByText("JOLT Mock");
+
     await userEvent.click(mockOption);
 
     await waitFor(() => {
@@ -111,11 +114,13 @@ describe("MockConfigurationLevel", () => {
 
     // Select a mock option
     const mockOption = screen.getByText("JOLT Mock");
+
     await userEvent.click(mockOption);
 
     await waitFor(() => {
       // Select a server option
       const serverOptionRadio = screen.getByLabelText("Server Option 1");
+
       fireEvent.click(serverOptionRadio);
     });
 
@@ -136,6 +141,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const mockOption = screen.getByText("JOLT Mock");
+
     await userEvent.click(mockOption);
 
     // Should not crash and should show empty state
@@ -146,11 +152,13 @@ describe("MockConfigurationLevel", () => {
 
   it("matches snapshot in loading state", () => {
     const { container } = renderComponent();
+
     expect(container).toMatchSnapshot();
   });
 
   it("matches snapshot with mock options", () => {
     const { container } = renderComponent();
+
     expect(container).toMatchSnapshot();
   });
 
@@ -159,6 +167,7 @@ describe("MockConfigurationLevel", () => {
 
     // Select a mock option to trigger server options display
     const mockOption = screen.getByText("JOLT Mock");
+
     await userEvent.click(mockOption);
 
     await waitFor(() => {

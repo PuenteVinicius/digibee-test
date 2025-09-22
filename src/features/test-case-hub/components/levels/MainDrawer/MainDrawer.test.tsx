@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+import MainDrawer from "./MainDrawer";
+
 import { MockOption } from "@/types";
 import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
 import Drawer from "@/components/shared/Drawer/Drawer";
-import MainDrawer from "./MainDrawer";
 
 // Mock dependencies
 vi.mock("@/components/shared/Drawer/Drawer", () => ({
@@ -22,15 +24,15 @@ vi.mock(
         {mockOptions.map((option: MockOption) => (
           <button
             key={option.id}
-            onClick={() => onLevelSelect(CreateLevels.MAIN)}
             data-testid={`level-option-${option.id}`}
+            onClick={() => onLevelSelect(CreateLevels.MAIN)}
           >
             {option.label}
           </button>
         ))}
       </div>
     )),
-  })
+  }),
 );
 
 vi.mock("@heroui/button", () => ({
@@ -87,6 +89,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const drawer = screen.getByTestId("drawer");
+
     expect(drawer).toHaveAttribute("isOpen", "true");
   });
 
@@ -94,6 +97,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const options = screen.getAllByTestId(/level-option-/);
+
     expect(options).toHaveLength(mockProps.mockOptions.length);
   });
 
@@ -101,6 +105,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const firstOption = screen.getByTestId("level-option-1");
+
     fireEvent.click(firstOption);
 
     expect(mockProps.navigateTo).toHaveBeenCalledWith(CreateLevels.MAIN);
@@ -110,6 +115,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const cancelButton = screen.getByText("Cancel");
+
     fireEvent.click(cancelButton);
 
     expect(mockProps.onCancelButtonClick).toHaveBeenCalled();
@@ -119,6 +125,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const saveButton = screen.getByText("Save");
+
     fireEvent.click(saveButton);
 
     expect(mockProps.onSave).toHaveBeenCalled();
@@ -128,6 +135,7 @@ describe("MainDrawer", () => {
     render(<MainDrawer {...mockProps} />);
 
     const saveButton = screen.getByText("Save");
+
     expect(saveButton).not.toBeDisabled();
   });
 
@@ -143,17 +151,18 @@ describe("MainDrawer", () => {
     vi.mocked(Drawer).mockImplementation(
       ({ onLeftButtonClick, children, ...props }) => (
         <div data-testid="drawer" {...props}>
-          <button onClick={onLeftButtonClick} data-testid="left-button">
+          <button data-testid="left-button" onClick={onLeftButtonClick}>
             Left Button
           </button>
           {children}
         </div>
-      )
+      ),
     );
 
     render(<MainDrawer {...mockProps} />);
 
     const leftButton = screen.getByTestId("left-button");
+
     fireEvent.click(leftButton);
 
     expect(mockProps.goBack).toHaveBeenCalled();
@@ -161,6 +170,7 @@ describe("MainDrawer", () => {
 
   it("matches snapshot when drawer is open", () => {
     const { container } = render(<MainDrawer {...mockProps} />);
+
     expect(container).toMatchSnapshot();
   });
 
@@ -171,6 +181,7 @@ describe("MainDrawer", () => {
     };
 
     const { container } = render(<MainDrawer {...propsWithClosedDrawer} />);
+
     expect(container).toMatchSnapshot();
   });
 });

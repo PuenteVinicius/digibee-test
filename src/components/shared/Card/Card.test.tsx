@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import Card, { CardProps } from "./Card";
 
 vi.mock("@heroui/card", () => ({
   Card: vi.fn(({ children, onClick, className, shadow }) => (
     <div
       className={className}
-      data-testid="hero-ui-card"
       data-shadow={shadow}
+      data-testid="hero-ui-card"
       onClick={onClick}
     >
       {children}
@@ -71,6 +72,7 @@ describe("Card Component", () => {
     render(<Card {...defaultProps} />);
 
     const actionIcon = screen.getByTestId("plus-icon").parentElement;
+
     if (actionIcon) {
       fireEvent.click(actionIcon);
     }

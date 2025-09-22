@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import Drawer, { DrawerProps } from "./Drawer"; // Adjust the import path
 
 // Mock external dependencies
 vi.mock("@heroui/drawer", () => ({
   Drawer: vi.fn(({ children, isOpen, hideCloseButton, backdrop, radius }) => (
     <div
-      data-testid="hero-ui-drawer"
-      data-is-open={isOpen}
-      data-hide-close-button={hideCloseButton}
       data-backdrop={backdrop}
+      data-hide-close-button={hideCloseButton}
+      data-is-open={isOpen}
       data-radius={radius}
+      data-testid="hero-ui-drawer"
     >
       {isOpen && children}
     </div>
@@ -123,7 +124,7 @@ describe("Drawer Component", () => {
 
     expect(titleElement).toHaveClass("text-[22px] font-[700]");
     expect(descriptionElement).toHaveClass(
-      "mt-2 font-[400] tracking-wide text-sm text-gray-500 leading-5"
+      "mt-2 font-[400] tracking-wide text-sm text-gray-500 leading-5",
     );
   });
 
@@ -142,20 +143,21 @@ describe("Drawer Component", () => {
     render(<Drawer {...defaultProps} />);
 
     const drawerHeader = screen.getByTestId("drawer-header");
+
     expect(drawerHeader).toHaveClass("flex flex-col gap-0 pb-0");
   });
 
   it("should render without any icons", () => {
     render(
       <Drawer
-        isOpen={true}
-        title="Test Title"
         children={mockChildren}
-        onLeftButtonClick={mockOnLeftButtonClick}
-        onRightButtonClick={mockOnRightButtonClick}
+        isOpen={true}
         leftIcon={undefined}
         rightIcon={undefined}
-      />
+        title="Test Title"
+        onLeftButtonClick={mockOnLeftButtonClick}
+        onRightButtonClick={mockOnRightButtonClick}
+      />,
     );
 
     expect(screen.queryByTestId("left-icon")).not.toBeInTheDocument();

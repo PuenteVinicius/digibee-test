@@ -96,7 +96,7 @@ const MockConfigurationLevel = ({
                       base: cn(
                         "inline-flex m-0 ml-2 hover:border-primary items-center justify-between",
                         "flex-row-reverse cursor-pointer rounded-lg p-4",
-                        "border border-gray-200"
+                        "border border-gray-200",
                       ),
                     }}
                     description={serverOption.createdAt?.toString()}
