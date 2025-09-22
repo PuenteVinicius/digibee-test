@@ -93,22 +93,23 @@ const MockConfigurationLevel = ({
             ) : (
               <RadioGroup isRequired className="flex flex-col items-center">
                 {serverOptions.map((serverOption) => (
-                  <Radio
-                    key={serverOption.id}
-                    classNames={{
-                      base: cn(
-                        "inline-flex m-0 ml-2 hover:border-primary items-center justify-between",
-                        "flex-row-reverse cursor-pointer rounded-lg p-4",
-                        "border border-gray-200"
-                      ),
-                    }}
-                    description={serverOption.createdAt?.toString()}
-                    value={serverOption.label}
-                    onChange={() => saveServerOption(serverOption)}
-                  >
-                    <TagMockIcon />
-                    {serverOption.label}
-                  </Radio>
+                  <div className="flex items-center border border-gray-200 rounded-lg p-4 hover:border-primary">
+                    <TagMockIcon width={24} height={24} />
+                    <Radio
+                      key={serverOption.id}
+                      classNames={{
+                        base: cn(
+                          "inline-flex m-0 ml-2 items-center justify-between",
+                          "flex-row-reverse cursor-pointer"
+                        ),
+                      }}
+                      description={serverOption.createdAt?.toString()}
+                      value={serverOption.label}
+                      onChange={() => saveServerOption(serverOption)}
+                    >
+                      {serverOption.label}
+                    </Radio>
+                  </div>
                 ))}
               </RadioGroup>
             )}
