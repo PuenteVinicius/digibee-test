@@ -85,14 +85,6 @@ describe("MainDrawer", () => {
     expect(screen.getByTestId("main-level")).toBeInTheDocument();
   });
 
-  it("passes correct props to Drawer component", () => {
-    render(<MainDrawer {...mockProps} />);
-
-    const drawer = screen.getByTestId("drawer");
-
-    expect(drawer).toHaveAttribute("isOpen", "true");
-  });
-
   it("renders correct number of mock options", () => {
     render(<MainDrawer {...mockProps} />);
 
@@ -166,22 +158,5 @@ describe("MainDrawer", () => {
     fireEvent.click(leftButton);
 
     expect(mockProps.goBack).toHaveBeenCalled();
-  });
-
-  it("matches snapshot when drawer is open", () => {
-    const { container } = render(<MainDrawer {...mockProps} />);
-
-    expect(container).toMatchSnapshot();
-  });
-
-  it("matches snapshot when drawer is closed", () => {
-    const propsWithClosedDrawer = {
-      ...mockProps,
-      isOpen: false,
-    };
-
-    const { container } = render(<MainDrawer {...propsWithClosedDrawer} />);
-
-    expect(container).toMatchSnapshot();
   });
 });

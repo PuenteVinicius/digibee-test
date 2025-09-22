@@ -20,17 +20,10 @@ export const useMockApi = () => {
     setError(null);
 
     try {
-      // Mock delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Mock correct answer 90% of times
-      if (Math.random() > 0.1) {
-        setMockOptions(MOCK_OPTIONS);
+      setMockOptions(MOCK_OPTIONS);
 
-        return MOCK_OPTIONS;
-      } else {
-        throw new Error("Error on retrieve data");
-      }
+      return MOCK_OPTIONS;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknow error";
 
@@ -47,23 +40,16 @@ export const useMockApi = () => {
       setError(null);
 
       try {
-        // Mock network delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
         // Mock correct answer 90% of times
-        if (Math.random() > 0.2) {
-          return {
-            success: true,
-            message: "success on sending data",
-            data: {
-              ...data,
-              serverOptions: SERVER_OPTIONS,
-              createdAt: new Date().toISOString(),
-            },
-          };
-        } else {
-          throw new Error("Error on send data");
-        }
+        return {
+          success: true,
+          message: "success on sending data",
+          data: {
+            ...data,
+            serverOptions: SERVER_OPTIONS,
+            createdAt: new Date().toISOString(),
+          },
+        };
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Unknow error";
@@ -78,7 +64,7 @@ export const useMockApi = () => {
         setLoading(false);
       }
     },
-    [],
+    []
   );
 
   useEffect(() => {

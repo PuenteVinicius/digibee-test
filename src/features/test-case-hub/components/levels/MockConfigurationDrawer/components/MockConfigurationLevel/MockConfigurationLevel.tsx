@@ -8,6 +8,9 @@ import MockEmptyState from "@/components/shared/MockEmptyState/MockEmptyState";
 import { MockOption, ServerOption } from "@/types";
 import useMockIcons from "@/hooks/UseMockIcons/useMockIcons";
 
+import TagMockIcon from "../../../../../../../assets/tag-mock.svg?react";
+
+
 interface MockConfigurationLevelProps {
   onSelectedMockOption: (selectedMockOption: MockOption) => void;
 }
@@ -91,6 +94,8 @@ const MockConfigurationLevel = ({
             ) : (
               <RadioGroup isRequired className="flex flex-col items-center">
                 {serverOptions.map((serverOption) => (
+                  <div>
+                      <TagMockIcon />
                   <Radio
                     key={serverOption.id}
                     classNames={{
@@ -104,8 +109,10 @@ const MockConfigurationLevel = ({
                     value={serverOption.label}
                     onChange={() => saveServerOption(serverOption)}
                   >
-                    {serverOption.label}
+                      {serverOption.label}
                   </Radio>
+
+                  </div>
                 ))}
               </RadioGroup>
             )}

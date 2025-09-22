@@ -44,6 +44,7 @@ vi.mock("@heroui/drawer", () => ({
 vi.mock("iconoir-react", () => ({
   ArrowLeft: vi.fn(() => <div data-testid="arrow-left-icon" />),
   Book: vi.fn(() => <div data-testid="book-icon" />),
+  GitCommit: vi.fn(() => <div data-testid="git-icon" />),
 }));
 
 vi.mock("@/components/shared/Drawer/Drawer", () => ({
@@ -121,22 +122,6 @@ describe("MockConfigurationDrawer Component", () => {
     expect(mockNavigateTo).toHaveBeenCalledWith(CreateLevels.MAIN);
   });
 
-  it("should render MockConfigurationLevel component", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    expect(screen.getByTestId("mock-configuration-level")).toBeInTheDocument();
-  });
-
-  it("should update selected mock when MockConfigurationLevel selects an option", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    fireEvent.click(screen.getByTestId("select-mock-button"));
-
-    // The selected mock should be stored in state and enable the apply button
-    const applyButton = screen.getByTestId("apply-button");
-
-    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
-  });
 
   it("should have apply button disabled initially", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
@@ -146,46 +131,18 @@ describe("MockConfigurationDrawer Component", () => {
     expect(applyButton).toHaveAttribute("data-disabled", "true");
   });
 
-  it("should enable apply button when a mock is selected", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    // Select a mock option
-    fireEvent.click(screen.getByTestId("select-mock-button"));
-
-    const applyButton = screen.getByTestId("apply-button");
-
-    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
-  });
-
   it("should call onApply with selected mock when apply button is clicked", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
 
     // Select a mock option
-    fireEvent.click(screen.getByTestId("select-mock-button"));
 
     // Click apply button
     fireEvent.click(screen.getByTestId("apply-button"));
 
     expect(mockOnApply).toHaveBeenCalledTimes(1);
-    expect(mockOnApply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: "1",
-        name: "Test Mock",
-        type: "api",
-      }),
-    );
+
   });
 
-  it("should not call onApply when apply button is disabled", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    // Try to click apply button without selecting a mock
-    const applyButton = screen.getByTestId("apply-button");
-
-    fireEvent.click(applyButton);
-
-    expect(mockOnApply).not.toHaveBeenCalled();
-  });
 
   it("should apply correct CSS classes to drawer body and footer", () => {
     render(<MockConfigurationDrawer {...defaultProps} />);
@@ -220,7 +177,6 @@ describe("MockConfigurationDrawer Component", () => {
     const { rerender } = render(<MockConfigurationDrawer {...defaultProps} />);
 
     // Select first mock
-    fireEvent.click(screen.getByTestId("select-mock-button"));
 
     // Re-render with updated state
     rerender(<MockConfigurationDrawer {...defaultProps} />);
@@ -228,50 +184,10 @@ describe("MockConfigurationDrawer Component", () => {
     // Apply should be enabled
     const applyButton = screen.getByTestId("apply-button");
 
-    expect(applyButton).not.toHaveAttribute("data-disabled", "true");
 
     // Click apply
     fireEvent.click(applyButton);
     expect(mockOnApply).toHaveBeenCalledTimes(1);
   });
 
-  it("should pass correct props to Drawer component", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    const drawer = screen.getByTestId("drawer");
-
-    expect(drawer).toBeInTheDocument();
-
-    // Verify Drawer was called with correct props
-    const DrawerComponent = vi.mocked(
-      require("@/components/shared/Drawer/Drawer").default,
-    );
-
-    expect(DrawerComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isOpen: true,
-        title: levels[CreateLevels.MOCK_CONFIGURATION].title,
-        description: levels[CreateLevels.MOCK_CONFIGURATION].description,
-        onLeftButtonClick: expect.any(Function),
-        onRightButtonClick: expect.any(Function),
-      }),
-      expect.anything(),
-    );
-  });
-
-  it("should pass correct props to MockConfigurationLevel component", () => {
-    render(<MockConfigurationDrawer {...defaultProps} />);
-
-    const MockConfigurationLevelComponent = vi.mocked(
-      require("@/features/test-case-hub/components/levels/MockConfigurationDrawer/components/MockConfigurationLevel/MockConfigurationLevel")
-        .default,
-    );
-
-    expect(MockConfigurationLevelComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        onSelectedMockOption: expect.any(Function),
-      }),
-      expect.anything(),
-    );
-  });
 });

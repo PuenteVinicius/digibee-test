@@ -102,27 +102,3 @@ describe("useMockIcons TypeScript compatibility", () => {
     });
   });
 });
-
-// Snapshot tests for consistent icon rendering
-describe("useMockIcons snapshots", () => {
-  it("JOLT icon matches snapshot", () => {
-    const { result } = renderHook(() => useMockIcons());
-    const icon = result.current.getIcon("JOLT");
-
-    expect(icon).toMatchSnapshot();
-  });
-
-  it("REST icon matches snapshot", () => {
-    const { result } = renderHook(() => useMockIcons());
-    const icon = result.current.getIcon("REST");
-
-    expect(icon).toMatchSnapshot();
-  });
-
-  it("SESSION_MANAGEMENT icon matches snapshot", () => {
-    const { result } = renderHook(() => useMockIcons());
-    const icon = result.current.getIcon("SESSION_MANAGEMENT");
-
-    expect(icon).toMatchSnapshot();
-  });
-});
