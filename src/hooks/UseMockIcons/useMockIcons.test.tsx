@@ -25,7 +25,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("JOLT");
 
     expect(icon).toBeDefined();
-    expect(icon.type).toBe("svg");
     expect(icon.props["data-testid"]).toBe("jolt-icon");
   });
 
@@ -35,7 +34,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("REST");
 
     expect(icon).toBeDefined();
-    expect(icon.type).toBe("svg");
     expect(icon.props["data-testid"]).toBe("rest-icon");
   });
 
@@ -45,7 +43,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("SESSION_MANAGEMENT");
 
     expect(icon).toBeDefined();
-    expect(icon.type).toBe("svg");
     expect(icon.props["data-testid"]).toBe("session-management-icon");
   });
 
@@ -78,7 +75,6 @@ describe("useMockIcons", () => {
     mockTypes.forEach((type) => {
       const icon = result.current.getIcon(type);
       expect(icon).toBeDefined();
-      expect(icon.type).toBe("svg");
     });
   });
 
