@@ -1,13 +1,19 @@
 import { CardBody, Card as HeroUiCard } from "@heroui/card";
-import { Plus } from "iconoir-react";
+import { Plus, MoreVert } from "iconoir-react";
 
 export interface CardProps {
-  title: string;
+  title?: string;
   description?: string;
+  moreAction?: boolean;
   onClick?: () => void;
 }
 
-const Card = ({ title, description, onClick = () => {} }: CardProps) => {
+const Card = ({
+  title,
+  description,
+  onClick = () => {},
+  moreAction = false,
+}: CardProps) => {
   return (
     <HeroUiCard
       shadow="none"
@@ -24,7 +30,7 @@ const Card = ({ title, description, onClick = () => {} }: CardProps) => {
           </p>
         </div>
         <div className="p-0 cursor-pointer" onClick={() => onClick()}>
-          <Plus fontSize={15} />
+          {moreAction ? <MoreVert fontSize={12} /> : <Plus fontSize={15} />}
         </div>
       </CardBody>
     </HeroUiCard>

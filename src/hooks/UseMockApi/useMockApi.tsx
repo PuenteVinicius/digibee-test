@@ -1,32 +1,18 @@
+import { MockOption, ServerOption } from "@/types";
 import { useState, useCallback, useEffect } from "react";
-
-import JoltSvg from "../../../public/assets/pipeline-step-jolt.tsx";
-import RestSvg from "../../../public/assets/pipeline-step-rest.tsx";
-import SessionSvg from "../../../public/assets/pipeline-step-session-management.tsx";
 
 export interface ApiResponse {
   success: boolean;
   message: string;
   data?: any;
 }
-export interface MockOption {
-  id: string;
-  label: string;
-  svgPath?: any;
-}
-
-export interface ServerOption {
-  id: string;
-  label: string;
-  createdAt?: Date;
-}
 
 // Dados fictícios para o select
 export const MOCK_OPTIONS: MockOption[] = [
-  { id: "1", label: "Session Management", svgPath: SessionSvg },
-  { id: "2", label: "Rest V2 (HTTP / APIs)", svgPath: RestSvg },
-  { id: "3", label: "Session Management", svgPath: SessionSvg },
-  { id: "4", label: "Transformer (JOLT)", svgPath: JoltSvg },
+  { id: "1", label: "Session Management", key: "SESSION_MANAGEMENT",},
+  { id: "2", label: "Rest V2 (HTTP / APIs)", key: "REST" },
+  { id: "3", label: "Session Management", key: "SESSION_MANAGEMENT" }, 
+  { id: "4", label: "Transformer (JOLT)", key: "JOLT" },
 ];
 
 export const SERVER_OPTIONS: ServerOption[] = [

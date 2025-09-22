@@ -1,13 +1,10 @@
-import Drawer from "@/components/shared/Drawer/Drawer";
-import { CreateLevels, levels } from "./hooks/levelManager/types";
+import { CreateLevels } from "./hooks/levelManager/types";
 import useLevelManager from "./hooks/levelManager/useLevelManager";
-import MainLevel from "./components/levels/MainLevel/MainLevel";
-import { ArrowLeft, Book } from "iconoir-react";
-import { Xmark } from "iconoir-react";
-import MockConfigurationLevel from "./components/levels/MockConfigurationLevel/MockConfigurationLevel";
 import { useState } from "react";
-import { MockOption } from "@/hooks/UseMockApi/useMockApi";
 import { addToast } from "@heroui/react";
+import { MockOption } from "@/types";
+import MockConfigurationDrawer from "./components/levels/MockConfigurationDrawer/MockConfigurationDrawer";
+import MainDrawer from "./components/levels/MainDrawer/MainDrawer";
 
 export interface DrawerProps {
   isOpen: boolean;
@@ -15,85 +12,59 @@ export interface DrawerProps {
 }
 
 const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
-  const [selectedMockOptions, setSelectedMockOptions] = useState<MockOption[]>(
-    []
-  );
-  const [newSelectedMockOption, setNewSelectedMockOption] =
-    useState<MockOption | null>();
+  const [mockOptions, setMockOptions] = useState<MockOption[]>([]);
 
   const { currentLevel, navigateTo, goBack } = useLevelManager({
     initialLevel: CreateLevels.MAIN,
   });
 
-  const updateMockedOptions = () => {
-    if (newSelectedMockOption) {
-      const currentMockOptions: MockOption[] = selectedMockOptions;
-      if (
-        !currentMockOptions.find((item) => item.id === newSelectedMockOption.id)
-      ) {
-        currentMockOptions.push(newSelectedMockOption);
-        setSelectedMockOptions(currentMockOptions);
+  const updateMockedOptions = (mockOption?: MockOption) => {
+    if (mockOption) {
+      const currentMockOptions: MockOption[] = mockOptions;
+      if (!currentMockOptions.find((item) => item.id === mockOption.id)) {
+        currentMockOptions.push(mockOption);
+        setMockOptions(currentMockOptions);
         goBack();
       }
     }
   };
 
-  const onSave = () => {
+  const callSuccsessToast = () => {
     addToast({
       description: "Your test has been created successfully.",
       color: "success",
     });
-    killDrawer();
   };
 
-  const killDrawer = () => {
-    setSelectedMockOptions([]);
-    setNewSelectedMockOption(null);
+  const saveMockTest = () => {
+    callSuccsessToast();
+    closeDrawer();
+  };
+
+  const closeDrawer = () => {
+    setMockOptions([]);
     onCloseDrawer();
   };
 
   return (
     <>
       {currentLevel === CreateLevels.MAIN && (
-        <Drawer
+        <MainDrawer
           isOpen={isOpen}
-          title={levels[currentLevel].title}
-          description={levels[currentLevel].description}
-          mainStep={currentLevel === CreateLevels.MAIN}
-          leftIcon={<Xmark fontSize={16} />}
-          rightIcon={<Book fontSize={13} />}
-          onLeftButtonClick={killDrawer}
-          onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
-          onCancelButtonClick={() => killDrawer()}
-          onApply={() => updateMockedOptions()}
-          onSave={() => onSave()}
-        >
-          <MainLevel
-            onLevelSelect={(selectedLevel) => navigateTo(selectedLevel)}
-            selectedMockOptions={selectedMockOptions}
-          />
-        </Drawer>
+          mockOptions={mockOptions}
+          onCancelButtonClick={() => closeDrawer()}
+          onSave={() => saveMockTest()}
+          navigateTo={(selectedLevel) => navigateTo(selectedLevel)}
+          goBack={() => onCloseDrawer()}
+        />
       )}
       {currentLevel === CreateLevels.MOCK_CONFIGURATION && (
-        <Drawer
+        <MockConfigurationDrawer
           isOpen={isOpen}
-          title={levels[currentLevel].title}
-          description={levels[currentLevel].description}
-          mainStep={false}
-          leftIcon={<ArrowLeft fontSize={13} />}
-          rightIcon={<Book fontSize={13} />}
-          onLeftButtonClick={goBack}
-          onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
-          onCancelButtonClick={() => killDrawer()}
-          onApply={() => updateMockedOptions()}
-          onSave={() => onSave()}
-        >
-          <MockConfigurationLevel
-            onSelectedMockOption={(selectedMockOption) =>
-              setNewSelectedMockOption(selectedMockOption)
-            }
-          />
-        </Drawer>
+          onApply={(selectedMock) => updateMockedOptions(selectedMock)}
+          goBack={() => goBack()}
+          navigateTo={(selectedLevel) => navigateTo(selectedLevel)}
+        />
       )}
     </>
   );

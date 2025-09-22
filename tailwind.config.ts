@@ -163,13 +163,13 @@ export default {
               200: "#FFEDEA",                 // Negative Container
               300: "#FFEDEA",                 // Negative Container
               400: "#BA1A1A",                 // Negative Container
-              500: "#BA1A1A",                 // Negative • On Negative Container
+              500: "#0D0D0D",                 // Negative • On Negative Container
               600: "#BA1A1A",                 // Negative • On Negative Container
               700: "#BA1A1A",                 // Negative • On Negative Container
               800: "#BA1A1A",                 // Negative • On Negative Container
               900: "#BA1A1A",                 // Negative • On Negative Container
               foreground: "#FFFFFF",          // On Negative
-              DEFAULT: "#BA1A1A",             // Negative
+              DEFAULT: "#0D0D0D",             // Negative
             },
           }
         },
