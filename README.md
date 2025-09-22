@@ -35,39 +35,6 @@ yarn test
 yarn build
 ```
 
-## 🎯 Features
-
-### Button Features
-
-- ✅ _4 Variants_: primary, outline, warning, no-outline
-- ✅ _3 Sizes_: sm, md, lg
-- ✅ _5 States_: default, hover, inactive, loading, pressed
-- ✅ _Icon support_: left/right icons
-- ✅ _Loading states_: with custom loading: pseudo-class
-- ✅ _Full accessibility_: ARIA labels, keyboard navigation
-
-### Input Features
-
-- ✅ _4 Variants_: default, filled, outline, error
-- ✅ _Validation_: Real-time validation with error messages
-- ✅ _Icons_: Left/right icons with click handlers
-- ✅ _Password toggle_: Visibility toggle for password fields
-- ✅ _Accessibility_: Full ARIA support
-
-### Modal Features
-
-- ✅ _4 Sizes_: sm, md, lg, xl
-- ✅ _Accessibility_: Focus trapping, ARIA roles
-- ✅ _Keyboard navigation_: Escape key to close
-- ✅ _Customizable_: Any content, customizable header
-
-### LoginForm Features
-
-- ✅ _Form validation_: Email and password validation
-- ✅ _Loading states_: Button loading during submission
-- ✅ _Success modal_: Congratulations modal on success
-- ✅ _Accessibility_: Complete ARIA implementation
-
 ## 🧪 Testing
 
 ### Test Commands
