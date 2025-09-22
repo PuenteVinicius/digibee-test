@@ -10,9 +10,3 @@ export interface ServerOption {
   label: string;
   createdAt?: Date;
 }
-
-export enum MockKey {
-  "SESSION_MANAGEMENT",
-  "REST",
-  "JOLT",
-}

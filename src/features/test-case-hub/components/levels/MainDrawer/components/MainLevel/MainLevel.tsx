@@ -7,12 +7,8 @@ import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
 import { MockOption } from "@/types";
+import { TEST_GROUPS } from "@/constants";
 
-const groups = [
-  { key: "group-1", label: "Group 1" },
-  { key: "group-2", label: "Group 2" },
-  { key: "group-3", label: "Group 3" },
-];
 interface MainLevelProps {
   onLevelSelect: (level: CreateLevels) => void;
   mockOptions: MockOption[];
@@ -144,8 +140,8 @@ const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
                 trigger: "bg-white",
               }}
             >
-              {groups.map((animal) => (
-                <SelectItem key={animal.key}>{animal.label}</SelectItem>
+              {TEST_GROUPS.map((testGroup) => (
+                <SelectItem key={testGroup.key}>{testGroup.label}</SelectItem>
               ))}
             </Select>
           </div>

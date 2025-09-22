@@ -5,7 +5,7 @@ import {
   CreateLevels,
   levels,
 } from "@/features/test-case-hub/hooks/levelManager/types";
-import MockConfigurationLevel from "@/components/MockConfigurationLevel/MockConfigurationLevel";
+import MockConfigurationLevel from "@/features/test-case-hub/components/levels/MockConfigurationDrawer/components/MockConfigurationLevel/MockConfigurationLevel";
 import { MockOption } from "@/types";
 import Drawer from "@/components/shared/Drawer/Drawer";
 import { useState } from "react";

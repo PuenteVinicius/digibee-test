@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
 import { DrawerBody, DrawerFooter } from "@heroui/drawer";
-import MainLevel from "@/components/MainLevel/MainLevel";
+import MainLevel from "@/features/test-case-hub/components/levels/MainDrawer/components/MainLevel/MainLevel";
 import { MockOption } from "@/types";
 import {
   CreateLevels,

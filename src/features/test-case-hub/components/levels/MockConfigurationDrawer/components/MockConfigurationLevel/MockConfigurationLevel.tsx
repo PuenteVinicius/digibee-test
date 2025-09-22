@@ -5,9 +5,7 @@ import { RadioGroup, Radio, cn } from "@heroui/react";
 import SkeletonCard from "@/components/shared/Skeleton/Skeleton";
 import MockEmptyState from "@/components/shared/MockEmptyState/MockEmptyState";
 import { MockOption, ServerOption } from "@/types";
-import JoltIcon from "../../assets/pipeline-step-jolt.svg?react";
-import RestIcon from "../../assets/pipeline-step-rest.svg?react";
-import SessionManagementIcon from "../../assets/pipeline-step-session-management.svg?react";
+import useMockIcons from "@/hooks/UseIMockIcons/useMockIcons";
 
 interface MockConfigurationLevelProps {
   onSelectedMockOption: (selectedMockOption: MockOption) => void;
@@ -19,6 +17,7 @@ const MockConfigurationLevel = ({
   const { postData, mockOptions, loading } = useMockApi();
   const [serverOptions, setServerOptions] = useState<ServerOption[]>([]);
   const [mockOption, setMockOption] = useState<MockOption>();
+  const { getIcon } = useMockIcons();
 
   const saveServerOption = (serverOption: ServerOption) => {
     if (mockOption) {
@@ -46,13 +45,7 @@ const MockConfigurationLevel = ({
           variant="bordered"
           placeholder="Choose a step to mock..."
           startContent={
-            <div className="flex items-center">
-              {mockOption?.key === "JOLT" && <JoltIcon />}
-              {mockOption?.key === "REST" && <RestIcon />}
-              {mockOption?.key === "SESSION_MANAGEMENT" && (
-                <SessionManagementIcon />
-              )}
-            </div>
+            <div className="flex items-center">{getIcon(mockOption?.key)}</div>
           }
           classNames={{
             mainWrapper: "flex items-center h-full",
@@ -65,11 +58,7 @@ const MockConfigurationLevel = ({
               key={mockOption.id}
               startContent={
                 <div className="flex items-center">
-                  {mockOption?.key === "JOLT" && <JoltIcon />}
-                  {mockOption?.key === "REST" && <RestIcon />}
-                  {mockOption?.key === "SESSION_MANAGEMENT" && (
-                    <SessionManagementIcon />
-                  )}
+                  {getIcon(mockOption.key)}
                 </div>
               }
             >

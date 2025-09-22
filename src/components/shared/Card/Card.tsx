@@ -1,14 +1,12 @@
 import { CardBody, Card as HeroUiCard } from "@heroui/card";
 import { Plus, MoreVert } from "iconoir-react";
-import JoltIcon from "../../../assets/pipeline-step-jolt.svg?react";
-import RestIcon from "../../../assets/pipeline-step-rest.svg?react";
-import SessionManagementIcon from "../../../assets/pipeline-step-session-management.svg?react";
+import useMockIcons, { MockIcon } from "@/hooks/UseIMockIcons/useMockIcons";
 
 export interface CardProps {
   title?: string;
   description?: any;
   moreAction?: boolean;
-  mockIcon?: string;
+  mockIcon?: MockIcon;
   onClick?: () => void;
 }
 
@@ -17,8 +15,10 @@ const Card = ({
   description,
   onClick = () => {},
   moreAction = false,
-  mockIcon = "",
+  mockIcon,
 }: CardProps) => {
+  const { getIcon } = useMockIcons();
+
   return (
     <HeroUiCard
       shadow="none"
@@ -29,11 +29,7 @@ const Card = ({
         <div className="flex items-center">
           {mockIcon && (
             <div className="flex mr-4 p-2 bg-gray-50 rounded-md">
-              {mockIcon === "JOLT" && <JoltIcon height={24} width={24} />}
-              {mockIcon === "REST" && <RestIcon height={24} width={24} />}
-              {mockIcon === "SESSION_MANAGEMENT" && (
-                <SessionManagementIcon height={24} width={24} />
-              )}
+              {getIcon(mockIcon)}
             </div>
           )}
           <div className="flex flex-col">

@@ -1,4 +1,5 @@
-import { MockOption, ServerOption } from "@/types";
+import { MOCK_OPTIONS, SERVER_OPTIONS } from "@/constants";
+import { MockOption } from "@/types";
 import { useState, useCallback, useEffect } from "react";
 
 export interface ApiResponse {
@@ -6,19 +7,6 @@ export interface ApiResponse {
   message: string;
   data?: any;
 }
-
-// Dados fictícios para o select
-export const MOCK_OPTIONS: MockOption[] = [
-  { id: "1", label: "Session Management", key: "SESSION_MANAGEMENT" },
-  { id: "2", label: "Rest V2 (HTTP / APIs)", key: "REST" },
-  { id: "3", label: "Session Management", key: "SESSION_MANAGEMENT" },
-  { id: "4", label: "Transformer (JOLT)", key: "JOLT" },
-];
-
-export const SERVER_OPTIONS: ServerOption[] = [
-  { id: "1", label: "Mocked response name #1", createdAt: new Date() },
-  { id: "2", label: "Mocked response name #2", createdAt: new Date() },
-];
 
 export const useMockApi = () => {
   const [loading, setLoading] = useState(false);
@@ -31,19 +19,18 @@ export const useMockApi = () => {
     setError(null);
 
     try {
-      // Simula delay de rede
+      // Mock delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simula resposta bem-sucedida 90% das vezes
+      // Mock correct answer 90% of times
       if (Math.random() > 0.1) {
         setMockOptions(MOCK_OPTIONS);
         return MOCK_OPTIONS;
       } else {
-        throw new Error("Falha ao carregar opções");
+        throw new Error("Error on retrieve data");
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Erro desconhecido";
+      const errorMessage = err instanceof Error ? err.message : "Unknow error";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -51,21 +38,20 @@ export const useMockApi = () => {
     }
   }, []);
 
-  // Simula um POST para enviar dados
   const postData = useCallback(
     async (data: MockOption): Promise<ApiResponse> => {
       setLoading(true);
       setError(null);
 
       try {
-        // Simula delay de rede
+        // Mock network delay
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        // Simula resposta bem-sucedida 80% das vezes
+        // Mock correct answer 90% of times
         if (Math.random() > 0.2) {
           return {
             success: true,
-            message: "Dados enviados com sucesso!",
+            message: "success on sending data",
             data: {
               ...data,
               serverOptions: SERVER_OPTIONS,
@@ -73,11 +59,11 @@ export const useMockApi = () => {
             },
           };
         } else {
-          throw new Error("Falha no envio dos dados");
+          throw new Error("Error on send data");
         }
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Erro no envio";
+          err instanceof Error ? err.message : "Unknow error";
         setError(errorMessage);
         return {
           success: false,
@@ -90,7 +76,6 @@ export const useMockApi = () => {
     []
   );
 
-  // Carrega as opções automaticamente quando o hook é inicializado
   useEffect(() => {
     fetchMockOptions();
   }, [fetchMockOptions]);
