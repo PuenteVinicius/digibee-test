@@ -28,9 +28,7 @@ vi.mock("iconoir-react", () => ({
 vi.mock("@/hooks/UseIMockIcons/useMockIcons");
 
 describe("Card Component", () => {
-  const mockGetIcon = vi.fn();
   const mockOnClick = vi.fn();
-  const mockIcon = "some-icon" as any;
 
   const defaultProps: CardProps = {
     title: "Test Title",
