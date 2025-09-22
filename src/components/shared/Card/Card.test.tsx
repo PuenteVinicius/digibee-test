@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import Card, { CardProps } from "./Card"; // ajuste o caminho conforme necessário
 
 // Mock dos componentes externos
 vi.mock("@heroui/card", () => ({
   Card: vi.fn(({ children, onClick, className }) => (
-    <div onClick={onClick} className={className} data-testid="card">
+    <div className={className} data-testid="card" onClick={onClick}>
       {children}
     </div>
   )),
@@ -47,9 +48,11 @@ describe("Card Component", () => {
 
   it("should call onClick when the card is clicked", () => {
     const handleClick = vi.fn();
+
     renderComponent({ onClick: handleClick });
 
     const card = screen.getByTestId("card");
+
     fireEvent.click(card);
 
     expect(handleClick).toHaveBeenCalledTimes(1);
@@ -57,9 +60,11 @@ describe("Card Component", () => {
 
   it("should call onClick when the plus icon is clicked", () => {
     const handleClick = vi.fn();
+
     renderComponent({ onClick: handleClick });
 
     const plusIcon = screen.getByTestId("plus-icon");
+
     fireEvent.click(plusIcon);
 
     expect(handleClick).toHaveBeenCalledTimes(1);
@@ -69,11 +74,13 @@ describe("Card Component", () => {
     renderComponent();
 
     const card = screen.getByTestId("card");
+
     expect(card).toHaveClass("w-full");
     expect(card).toHaveClass("border");
     expect(card).toHaveClass("border-gray-200");
 
     const cardBody = screen.getByTestId("card-body");
+
     expect(cardBody).toHaveClass("pt-0");
     expect(cardBody).toHaveClass("pb-2");
     expect(cardBody).toHaveClass("flex");
@@ -92,10 +99,12 @@ describe("Card Component", () => {
     renderComponent();
 
     const title = screen.getByText("Test Card");
+
     expect(title).toHaveClass("text-sm");
     expect(title).toHaveClass("font-medium");
 
     const description = screen.getByText("Test description");
+
     expect(description).toHaveClass("font-light");
     expect(description).toHaveClass("text-sm");
     expect(description).toHaveClass("text-gray-500");
@@ -107,6 +116,7 @@ describe("Card Component", () => {
     renderComponent({ onClick: undefined });
 
     const card = screen.getByTestId("card");
+
     expect(() => fireEvent.click(card)).not.toThrow();
   });
 });

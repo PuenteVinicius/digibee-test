@@ -1,7 +1,9 @@
+import { MockIcon } from "@/hooks/UseIMockIcons/useMockIcons";
+
 export interface MockOption {
   id: string;
   label: string;
-  key: any;
+  key: MockIcon;
   serverOption?: ServerOption;
 }
 

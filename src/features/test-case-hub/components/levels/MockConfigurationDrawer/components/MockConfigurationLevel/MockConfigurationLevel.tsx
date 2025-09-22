@@ -1,8 +1,9 @@
 import { Select, SelectItem } from "@heroui/select";
 import { useState } from "react";
-import { useMockApi } from "@/hooks/UseMockApi/useMockApi";
 import { RadioGroup, Radio, cn } from "@heroui/react";
-import SkeletonCard from "@/components/shared/Skeleton/Skeleton";
+
+import { useMockApi } from "@/hooks/UseMockApi/useMockApi";
+import SkeletonCard from "@/components/shared/SkeletonCard/SkeletonCard";
 import MockEmptyState from "@/components/shared/MockEmptyState/MockEmptyState";
 import { MockOption, ServerOption } from "@/types";
 import useMockIcons from "@/hooks/UseIMockIcons/useMockIcons";
@@ -22,6 +23,7 @@ const MockConfigurationLevel = ({
   const saveServerOption = (serverOption: ServerOption) => {
     if (mockOption) {
       const updateMockOption: MockOption = { ...mockOption, serverOption };
+
       setMockOption(updateMockOption);
       onSelectedMockOption(updateMockOption);
     }
@@ -30,6 +32,7 @@ const MockConfigurationLevel = ({
   const saveMockOption = async (mockOption: MockOption) => {
     setMockOption(mockOption);
     const { data } = await postData(mockOption);
+
     setServerOptions(data.serverOptions);
   };
 
@@ -38,29 +41,35 @@ const MockConfigurationLevel = ({
       <div className="flex w-full flex-wrap mt-10 pb-6 border-b border-gray-200 rounded-lg">
         <Select
           aria-label="none"
-          isLoading={loading && mockOptions.length === 0}
           className="w-full mx-6 h-[60px]"
-          radius="lg"
-          size="lg"
-          variant="bordered"
-          placeholder="Choose a step to mock..."
-          startContent={
-            <div className="flex items-center">{getIcon(mockOption?.key)}</div>
-          }
           classNames={{
             mainWrapper: "flex items-center h-full",
             trigger: "bg-white h-full border",
           }}
+          isLoading={loading && mockOptions.length === 0}
+          placeholder="Choose a step to mock..."
+          radius="lg"
+          size="lg"
+          startContent={
+            <>
+              {!!mockOption && (
+                <div className="flex items-center">
+                  {getIcon(mockOption.key)}
+                </div>
+              )}
+            </>
+          }
+          variant="bordered"
         >
           {mockOptions.map((mockOption) => (
             <SelectItem
-              onClick={() => saveMockOption(mockOption)}
               key={mockOption.id}
               startContent={
                 <div className="flex items-center">
                   {getIcon(mockOption.key)}
                 </div>
               }
+              onClick={() => saveMockOption(mockOption)}
             >
               {mockOption.label}
             </SelectItem>
@@ -83,16 +92,16 @@ const MockConfigurationLevel = ({
                 {serverOptions.map((serverOption) => (
                   <Radio
                     key={serverOption.id}
-                    onChange={() => saveServerOption(serverOption)}
-                    description={serverOption.createdAt?.toString()}
-                    value={serverOption.label}
                     classNames={{
                       base: cn(
                         "inline-flex m-0 ml-2 hover:border-primary items-center justify-between",
                         "flex-row-reverse cursor-pointer rounded-lg p-4",
-                        "border border-gray-200"
+                        "border border-gray-200",
                       ),
                     }}
+                    description={serverOption.createdAt?.toString()}
+                    value={serverOption.label}
+                    onChange={() => saveServerOption(serverOption)}
                   >
                     {serverOption.label}
                   </Radio>

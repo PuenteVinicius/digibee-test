@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+
 import JoltIcon from "../../assets/pipeline-step-jolt.svg?react";
 import RestIcon from "../../assets/pipeline-step-rest.svg?react";
 import SessionManagementIcon from "../../assets/pipeline-step-session-management.svg?react";

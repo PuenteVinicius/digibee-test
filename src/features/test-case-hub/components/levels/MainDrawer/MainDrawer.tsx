@@ -1,12 +1,13 @@
 import { Button } from "@heroui/button";
 import { DrawerBody, DrawerFooter } from "@heroui/drawer";
+import { Book, Xmark } from "iconoir-react";
+
 import MainLevel from "@/features/test-case-hub/components/levels/MainDrawer/components/MainLevel/MainLevel";
 import { MockOption } from "@/types";
 import {
   CreateLevels,
   levels,
 } from "@/features/test-case-hub/hooks/levelManager/types";
-import { Book, Xmark } from "iconoir-react";
 import Drawer from "@/components/shared/Drawer/Drawer";
 
 export interface MainDrawerProps {
@@ -28,19 +29,19 @@ const MainDrawer = ({
 }: MainDrawerProps) => {
   return (
     <Drawer
+      description={levels[CreateLevels.MAIN].description}
       isOpen={isOpen}
       leftIcon={<Xmark fontSize={16} />}
       rightIcon={<Book fontSize={13} />}
       title={levels[CreateLevels.MAIN].title}
-      description={levels[CreateLevels.MAIN].description}
       onLeftButtonClick={() => goBack()}
       onRightButtonClick={() => {}}
     >
       <>
         <DrawerBody className="py-0 gap-0 px-0">
           <MainLevel
-            onLevelSelect={(selectedLevel) => navigateTo(selectedLevel)}
             mockOptions={mockOptions}
+            onLevelSelect={(selectedLevel) => navigateTo(selectedLevel)}
           />
         </DrawerBody>
         <DrawerFooter className="flex w-full justify-between">
@@ -53,9 +54,9 @@ const MainDrawer = ({
             Cancel
           </Button>
           <Button
-            isDisabled={mockOptions.length === 0}
             className="border-x font-semibold"
             color="primary"
+            isDisabled={mockOptions.length === 0}
             variant="bordered"
             onPress={onSave}
           >

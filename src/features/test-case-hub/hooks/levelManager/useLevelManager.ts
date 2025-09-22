@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+
 import { CreateLevels } from "./types";
 
 interface UseLevelProps {
@@ -19,6 +20,7 @@ const useLevelManager = ({
   const goBack = useCallback(() => {
     if (history.length > 1) {
       const newHistory = history.slice(0, -1);
+
       setHistory(newHistory);
       setCurrentLevel(newHistory[newHistory.length - 1]);
     }

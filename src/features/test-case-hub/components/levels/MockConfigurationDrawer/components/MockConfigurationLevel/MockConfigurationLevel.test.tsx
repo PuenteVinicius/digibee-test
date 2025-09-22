@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
 import MockConfigurationLevel from "./MockConfigurationLevel"; // ajuste o caminho
+
 import { useMockApi } from "@/hooks/UseMockApi/useMockApi";
-import { Select, SelectItem } from "@heroui/select";
-import { Skeleton } from "@heroui/skeleton";
-import { RadioGroup, Radio } from "@heroui/react";
-import { GitCommit } from "iconoir-react";
 
 // Mock dos hooks e componentes externos
 vi.mock("@/hooks/UseMockApi/useMockApi", () => ({
@@ -15,16 +13,16 @@ vi.mock("@/hooks/UseMockApi/useMockApi", () => ({
 vi.mock("@heroui/select", () => ({
   Select: vi.fn(({ children, isLoading, placeholder, classNames }) => (
     <div
-      data-testid="select"
+      data-classnames={JSON.stringify(classNames)}
       data-isloading={isLoading}
       data-placeholder={placeholder}
-      data-classnames={JSON.stringify(classNames)}
+      data-testid="select"
     >
       {children}
     </div>
   )),
   SelectItem: vi.fn(({ children, onClick, key }) => (
-    <div key={key} onClick={onClick} data-testid="select-item">
+    <div key={key} data-testid="select-item" onClick={onClick}>
       {children}
     </div>
   )),
@@ -32,22 +30,22 @@ vi.mock("@heroui/select", () => ({
 
 vi.mock("@heroui/skeleton", () => ({
   Skeleton: vi.fn(({ className }) => (
-    <div data-testid="skeleton" className={className}></div>
+    <div className={className} data-testid="skeleton" />
   )),
 }));
 
 vi.mock("@heroui/react", () => ({
   RadioGroup: vi.fn(({ children, className, isRequired }) => (
     <div
-      data-testid="radio-group"
       className={className}
       data-required={isRequired}
+      data-testid="radio-group"
     >
       {children}
     </div>
   )),
   Radio: vi.fn(({ children, description, value }) => (
-    <div data-testid="radio" data-value={value} data-description={description}>
+    <div data-description={description} data-testid="radio" data-value={value}>
       {children}
     </div>
   )),
@@ -83,7 +81,9 @@ describe("MockConfigurationLevel", () => {
 
   const renderComponent = () => {
     return render(
-      <MockConfigurationLevel onSelectedMockOption={mockOnSelectedMockOption} />
+      <MockConfigurationLevel
+        onSelectedMockOption={mockOnSelectedMockOption}
+      />,
     );
   };
 
@@ -100,9 +100,10 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const select = screen.getByTestId("select");
+
     expect(select).toHaveAttribute(
       "data-placeholder",
-      "Choose a step to mock..."
+      "Choose a step to mock...",
     );
   });
 
@@ -114,6 +115,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     fireEvent.click(selectItems[0]);
 
     await waitFor(() => {
@@ -129,6 +131,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     fireEvent.click(selectItems[0]);
 
     await waitFor(() => {
@@ -145,6 +148,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     fireEvent.click(selectItems[0]);
 
     await waitFor(() => {
@@ -162,6 +166,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const select = screen.getByTestId("select");
+
     expect(select).toHaveAttribute("data-isloading", "true");
   });
 
@@ -176,7 +181,7 @@ describe("MockConfigurationLevel", () => {
 
     expect(screen.getByTestId("select")).toHaveAttribute(
       "data-isloading",
-      "false"
+      "false",
     );
     expect(screen.getAllByTestId("skeleton")).toHaveLength(3); // 1 circle + 2 bars
   });
@@ -186,7 +191,7 @@ describe("MockConfigurationLevel", () => {
 
     expect(screen.getByTestId("git-commit-icon")).toBeInTheDocument();
     expect(
-      screen.getByText("Choose a step to see saved mocked responses.")
+      screen.getByText("Choose a step to see saved mocked responses."),
     ).toBeInTheDocument();
   });
 
@@ -198,13 +203,16 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     fireEvent.click(selectItems[0]);
 
     await waitFor(() => {
       const radioGroup = screen.getByTestId("radio-group");
+
       expect(radioGroup).toHaveAttribute("data-required", "true");
 
       const radios = screen.getAllByTestId("radio");
+
       expect(radios[0]).toHaveAttribute("data-value", "Mocked response #1");
       expect(radios[1]).toHaveAttribute("data-value", "Mocked response #2");
     });
@@ -216,6 +224,7 @@ describe("MockConfigurationLevel", () => {
     renderComponent();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     fireEvent.click(selectItems[0]);
 
     // Should not break, just not update server options
@@ -229,8 +238,9 @@ describe("MockConfigurationLevel", () => {
 
     const select = screen.getByTestId("select");
     const classNames = JSON.parse(
-      select.getAttribute("data-classnames") || "{}"
+      select.getAttribute("data-classnames") || "{}",
     );
+
     expect(classNames.trigger).toBe("bg-white");
   });
 
@@ -238,7 +248,7 @@ describe("MockConfigurationLevel", () => {
     const { container } = renderComponent();
 
     expect(
-      container.querySelector(".flex.flex-col.w-full.justify-center")
+      container.querySelector(".flex.flex-col.w-full.justify-center"),
     ).toBeInTheDocument();
     expect(container.querySelector(".py-2")).toBeInTheDocument();
     expect(container.querySelector(".flex.flex-wrap")).toBeInTheDocument();
@@ -253,6 +263,7 @@ describe("MockConfigurationLevel", () => {
       renderComponent();
 
       const selectItems = screen.getAllByTestId("select-item");
+
       fireEvent.click(selectItems[0]);
 
       await waitFor(() => {
@@ -261,13 +272,13 @@ describe("MockConfigurationLevel", () => {
         expect(radios[0]).toHaveTextContent("Mocked response #1");
         expect(radios[0]).toHaveAttribute(
           "data-description",
-          expect.stringContaining("2024")
+          expect.stringContaining("2024"),
         );
 
         expect(radios[1]).toHaveTextContent("Mocked response #2");
         expect(radios[1]).toHaveAttribute(
           "data-description",
-          expect.stringContaining("2024")
+          expect.stringContaining("2024"),
         );
       });
     });
@@ -295,6 +306,7 @@ describe("MockConfigurationLevel", () => {
       renderComponent();
 
       const selectItems = screen.getAllByTestId("select-item");
+
       fireEvent.click(selectItems[0]);
 
       await waitFor(() => {

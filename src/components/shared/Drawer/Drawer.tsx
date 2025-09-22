@@ -28,26 +28,26 @@ const Drawer = ({
 }: DrawerProps) => {
   return (
     <HeroUiDrawer
+      hideCloseButton
+      backdrop="transparent"
       isOpen={isOpen}
       radius="none"
-      backdrop="transparent"
-      hideCloseButton
     >
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-0 pb-0">
           <div className="flex w-full justify-between items-end mt-4">
             {leftIcon && (
               <div
-                onClick={() => onLeftButtonClick()}
                 className="cursor-pointer"
+                onClick={() => onLeftButtonClick()}
               >
                 {leftIcon}
               </div>
             )}
             {rightIcon && (
               <div
-                onClick={() => onRightButtonClick()}
                 className="cursor-pointer"
+                onClick={() => onRightButtonClick()}
               >
                 {rightIcon}
               </div>

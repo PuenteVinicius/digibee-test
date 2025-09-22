@@ -1,19 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import MainLevel from "./MainLevel"; // ajuste o caminho
-import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
+import { PATH_OPTIONS, PATH_CONDITIONS } from "./constants";
+
 import { MockOption } from "@/hooks/UseMockApi/useMockApi";
-import Card from "@/components/shared/Card/Card";
-import { Switch } from "@heroui/switch";
-import { Form } from "@heroui/form";
-import { Input, Textarea } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
-import { PATH_OPTIONS, PATH_CONDITIONS, Option } from "./constants";
+import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
 
 // Mock dos componentes externos
 vi.mock("@/components/shared/Card/Card", () => ({
   default: vi.fn(({ title, description, onClick }) => (
-    <div onClick={onClick} data-testid="card">
+    <div data-testid="card" onClick={onClick}>
       <h3 data-testid="card-title">{title}</h3>
       <p data-testid="card-description">{description}</p>
     </div>
@@ -23,13 +20,13 @@ vi.mock("@/components/shared/Card/Card", () => ({
 vi.mock("@heroui/switch", () => ({
   Switch: vi.fn(({ className, size, isSelected, onChange }) => (
     <input
-      type="checkbox"
-      data-testid="switch"
-      data-size={size}
-      data-selected={isSelected}
-      className={className}
-      onChange={onChange}
       checked={isSelected}
+      className={className}
+      data-selected={isSelected}
+      data-size={size}
+      data-testid="switch"
+      type="checkbox"
+      onChange={onChange}
     />
   )),
 }));
@@ -55,17 +52,17 @@ vi.mock("@heroui/input", () => ({
       type,
       classNames,
     }) => (
-      <div data-testid="input" data-name={name} data-type={type}>
+      <div data-name={name} data-testid="input" data-type={type}>
         <label data-placement={labelPlacement}>{label}</label>
         <input
-          placeholder={placeholder}
-          required={isRequired}
+          className={classNames?.inputWrapper}
           data-color={color}
           data-radius={radius}
-          className={classNames?.inputWrapper}
+          placeholder={placeholder}
+          required={isRequired}
         />
       </div>
-    )
+    ),
   ),
   Textarea: vi.fn(
     ({
@@ -78,27 +75,27 @@ vi.mock("@heroui/input", () => ({
       type,
       classNames,
     }) => (
-      <div data-testid="textarea" data-name={name} data-type={type}>
+      <div data-name={name} data-testid="textarea" data-type={type}>
         <label data-placement={labelPlacement}>{label}</label>
         <textarea
+          className={classNames?.inputWrapper}
+          data-radius={radius}
           placeholder={placeholder}
           required={isRequired}
-          data-radius={radius}
-          className={classNames?.inputWrapper}
         />
       </div>
-    )
+    ),
   ),
 }));
 
 vi.mock("@heroui/select", () => ({
   Select: vi.fn(({ children, className, radius, label, classNames }) => (
     <div
-      data-testid="select"
       className={className}
-      data-radius={radius}
-      data-label={label}
       data-classnames={JSON.stringify(classNames)}
+      data-label={label}
+      data-radius={radius}
+      data-testid="select"
     >
       {children}
     </div>
@@ -145,9 +142,9 @@ describe("MainLevel", () => {
   const renderComponent = (selectedMockOptions: MockOption[] = []) => {
     return render(
       <MainLevel
-        onLevelSelect={mockOnLevelSelect}
         selectedMockOptions={selectedMockOptions}
-      />
+        onLevelSelect={mockOnLevelSelect}
+      />,
     );
   };
 
@@ -163,6 +160,7 @@ describe("MainLevel", () => {
     renderComponent();
 
     const cards = screen.getAllByTestId("card");
+
     expect(cards).toHaveLength(2); // PATH_OPTIONS
     expect(screen.getByText("Path Option 1")).toBeInTheDocument();
     expect(screen.getByText("Description 1")).toBeInTheDocument();
@@ -172,6 +170,7 @@ describe("MainLevel", () => {
     renderComponent();
 
     const conditionCards = screen.getAllByTestId("card");
+
     expect(conditionCards.length).toBeGreaterThan(0);
     expect(screen.getByText("Condition 1")).toBeInTheDocument();
     expect(screen.getByText("Condition Desc 1")).toBeInTheDocument();
@@ -190,6 +189,7 @@ describe("MainLevel", () => {
     renderComponent();
 
     const switchElement = screen.getByTestId("switch");
+
     expect(switchElement).toHaveAttribute("data-selected", "false");
     expect(screen.getByText("Full flow (8 steps)")).toBeInTheDocument();
   });
@@ -198,6 +198,7 @@ describe("MainLevel", () => {
     renderComponent();
 
     const switchElement = screen.getByTestId("switch");
+
     expect(switchElement).toHaveAttribute("data-selected", "false");
 
     fireEvent.click(switchElement);
@@ -209,6 +210,7 @@ describe("MainLevel", () => {
 
     // Encontrar um card que tenha level definido (Condition 2 no mock)
     const cards = screen.getAllByTestId("card");
+
     fireEvent.click(cards[2]); // Condition 2 card
 
     expect(mockOnLevelSelect).toHaveBeenCalledWith(CreateLevels.ANOTHER_LEVEL);
@@ -219,6 +221,7 @@ describe("MainLevel", () => {
 
     // PATH_OPTIONS cards não têm level
     const pathOptionCards = screen.getAllByTestId("card").slice(0, 2);
+
     fireEvent.click(pathOptionCards[0]);
 
     expect(mockOnLevelSelect).not.toHaveBeenCalled();
@@ -246,9 +249,11 @@ describe("MainLevel", () => {
     renderComponent();
 
     const select = screen.getByTestId("select");
+
     expect(select).toBeInTheDocument();
 
     const selectItems = screen.getAllByTestId("select-item");
+
     expect(selectItems.length).toBeGreaterThan(0);
   });
 
@@ -256,6 +261,7 @@ describe("MainLevel", () => {
     renderComponent();
 
     const inputWrapper = screen.getByTestId("input").querySelector("input");
+
     expect(inputWrapper).toHaveClass("bg-white");
     expect(inputWrapper).toHaveClass("border-b");
     expect(inputWrapper).toHaveClass("border-gray-200");
@@ -263,6 +269,7 @@ describe("MainLevel", () => {
     const textareaWrapper = screen
       .getByTestId("textarea")
       .querySelector("textarea");
+
     expect(textareaWrapper).toHaveClass("bg-white");
     expect(textareaWrapper).toHaveClass("border-b");
     expect(textareaWrapper).toHaveClass("border-gray-200");
@@ -272,6 +279,7 @@ describe("MainLevel", () => {
     const { container } = renderComponent();
 
     const headings = container.querySelectorAll("h2");
+
     headings.forEach((heading) => {
       expect(heading).toHaveClass("uppercase");
       expect(heading).toHaveClass("font-semibold");
@@ -332,7 +340,7 @@ describe("MainLevel", () => {
       // Restaurar mocks
       vi.mocked(PATH_OPTIONS).push(
         { title: "Path Option 1", description: "Description 1" },
-        { title: "Path Option 2", description: "Description 2" }
+        { title: "Path Option 2", description: "Description 2" },
       );
       vi.mocked(PATH_CONDITIONS).push(
         {
@@ -344,7 +352,7 @@ describe("MainLevel", () => {
           title: "Condition 2",
           description: "Condition Desc 2",
           level: CreateLevels.ANOTHER_LEVEL,
-        }
+        },
       );
     });
   });

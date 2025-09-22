@@ -4,12 +4,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import svgr from "vite-plugin-svgr";
 
-
 export default defineConfig({
-  plugins: [
-    react(),
-    tsconfigPaths(),
-    tailwindcss(),
-    svgr(),
-  ],
+  plugins: [react(), tsconfigPaths(), tailwindcss(), svgr()],
 });

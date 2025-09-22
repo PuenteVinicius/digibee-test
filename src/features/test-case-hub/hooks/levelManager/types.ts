@@ -11,7 +11,8 @@ export enum CreateLevels {
 export const levels: { [key in number]: Level } = {
   [CreateLevels.MAIN]: {
     title: "Create a test case",
-    description: "Define your coverage area and use tools to simulate the desired paths."
+    description:
+      "Define your coverage area and use tools to simulate the desired paths.",
   },
   [CreateLevels.MOCK_CONFIGURATION]: {
     title: "Mock Response",

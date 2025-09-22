@@ -1,5 +1,6 @@
 import { CardBody, Card as HeroUiCard } from "@heroui/card";
 import { Plus, MoreVert } from "iconoir-react";
+
 import useMockIcons, { MockIcon } from "@/hooks/UseIMockIcons/useMockIcons";
 
 export interface CardProps {
@@ -21,9 +22,9 @@ const Card = ({
 
   return (
     <HeroUiCard
+      className="w-full border border-gray-200"
       shadow="none"
       onClick={() => onClick()}
-      className="w-full border border-gray-200"
     >
       <CardBody className="py-3 pl-4 pr-5 flex flex-row justify-between items-center">
         <div className="flex items-center">

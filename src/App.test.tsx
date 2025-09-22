@@ -1,15 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import App from "./App"; // ajuste o caminho conforme necessário
 
 // Mock dos componentes externos
 vi.mock("@heroui/button", () => ({
   Button: vi.fn(({ children, onPress, color, variant }) => (
     <button
-      onClick={onPress}
       data-color={color}
-      data-variant={variant}
       data-testid="open-drawer-button"
+      data-variant={variant}
+      onClick={onPress}
     >
       {children}
     </button>
@@ -18,11 +19,11 @@ vi.mock("@heroui/button", () => ({
 
 vi.mock("./features/test-case-hub/TestCaseDrawer", () => ({
   default: vi.fn(({ isOpen, onCloseDrawer }) => (
-    <div data-testid="test-case-drawer" data-isopen={isOpen}>
+    <div data-isopen={isOpen} data-testid="test-case-drawer">
       {isOpen && (
         <div>
           <span>TestCaseDrawer Component</span>
-          <button onClick={onCloseDrawer} data-testid="close-drawer-button">
+          <button data-testid="close-drawer-button" onClick={onCloseDrawer}>
             Close Drawer
           </button>
         </div>
@@ -44,9 +45,10 @@ describe("App Component", () => {
 
     // Drawer deve estar fechado inicialmente
     const drawer = screen.getByTestId("test-case-drawer");
+
     expect(drawer).toHaveAttribute("data-isopen", "false");
     expect(
-      screen.queryByText("TestCaseDrawer Component")
+      screen.queryByText("TestCaseDrawer Component"),
     ).not.toBeInTheDocument();
   });
 
@@ -56,7 +58,7 @@ describe("App Component", () => {
     // Drawer inicialmente fechado
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "false"
+      "false",
     );
 
     // Clicar no botão para abrir o drawer
@@ -65,7 +67,7 @@ describe("App Component", () => {
     // Drawer deve estar aberto
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "true"
+      "true",
     );
     expect(screen.getByText("TestCaseDrawer Component")).toBeInTheDocument();
   });
@@ -77,7 +79,7 @@ describe("App Component", () => {
     fireEvent.click(screen.getByTestId("open-drawer-button"));
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "true"
+      "true",
     );
 
     // Fechar o drawer através do botão de fechar
@@ -86,10 +88,10 @@ describe("App Component", () => {
     // Drawer deve estar fechado novamente
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "false"
+      "false",
     );
     expect(
-      screen.queryByText("TestCaseDrawer Component")
+      screen.queryByText("TestCaseDrawer Component"),
     ).not.toBeInTheDocument();
   });
 
@@ -97,6 +99,7 @@ describe("App Component", () => {
     render(<App />);
 
     const button = screen.getByTestId("open-drawer-button");
+
     expect(button).toHaveAttribute("data-color", "primary");
     expect(button).toHaveAttribute("data-variant", "bordered");
   });
@@ -108,6 +111,7 @@ describe("App Component", () => {
     fireEvent.click(screen.getByTestId("open-drawer-button"));
 
     const drawer = screen.getByTestId("test-case-drawer");
+
     expect(drawer).toHaveAttribute("data-isopen", "true");
 
     // Verificar se o botão de fechar funciona (testa a prop onCloseDrawer)
@@ -121,28 +125,28 @@ describe("App Component", () => {
     // Estado inicial: drawer fechado
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "false"
+      "false",
     );
 
     // Abrir drawer
     fireEvent.click(screen.getByTestId("open-drawer-button"));
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "true"
+      "true",
     );
 
     // Fechar drawer
     fireEvent.click(screen.getByTestId("close-drawer-button"));
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "false"
+      "false",
     );
 
     // Reabrir drawer
     fireEvent.click(screen.getByTestId("open-drawer-button"));
     expect(screen.getByTestId("test-case-drawer")).toHaveAttribute(
       "data-isopen",
-      "true"
+      "true",
     );
   });
 
@@ -154,6 +158,7 @@ describe("App Component", () => {
 
     // Verificar classes do div que contém o botão
     const buttonContainer = container.querySelector(".w-full");
+
     expect(buttonContainer).toHaveClass("w-full");
     expect(buttonContainer).toHaveClass("h-screen");
     expect(buttonContainer).toHaveClass("flex");

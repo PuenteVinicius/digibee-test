@@ -1,6 +1,8 @@
 import { Button } from "@heroui/button";
 import { DrawerBody, DrawerFooter } from "@heroui/drawer";
 import { ArrowLeft, Book } from "iconoir-react";
+import { useState } from "react";
+
 import {
   CreateLevels,
   levels,
@@ -8,7 +10,6 @@ import {
 import MockConfigurationLevel from "@/features/test-case-hub/components/levels/MockConfigurationDrawer/components/MockConfigurationLevel/MockConfigurationLevel";
 import { MockOption } from "@/types";
 import Drawer from "@/components/shared/Drawer/Drawer";
-import { useState } from "react";
 
 export interface MockConfigurationDrawerProps {
   isOpen: boolean;
@@ -27,11 +28,11 @@ const MockConfigurationDrawer = ({
 
   return (
     <Drawer
+      description={levels[CreateLevels.MOCK_CONFIGURATION].description}
       isOpen={isOpen}
       leftIcon={<ArrowLeft fontSize={13} />}
       rightIcon={<Book fontSize={13} />}
       title={levels[CreateLevels.MOCK_CONFIGURATION].title}
-      description={levels[CreateLevels.MOCK_CONFIGURATION].description}
       onLeftButtonClick={() => goBack()}
       onRightButtonClick={() => navigateTo(CreateLevels.MAIN)}
     >
@@ -45,9 +46,9 @@ const MockConfigurationDrawer = ({
         </DrawerBody>
         <DrawerFooter className="flex w-full justify-between">
           <Button
-            isDisabled={!selectedMock}
             className="w-full"
             color="primary"
+            isDisabled={!selectedMock}
             variant="bordered"
             onPress={() => onApply(selectedMock)}
           >

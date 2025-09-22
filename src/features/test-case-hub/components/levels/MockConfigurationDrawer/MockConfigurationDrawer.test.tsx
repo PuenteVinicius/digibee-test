@@ -1,17 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import Drawer, { DrawerProps } from "./Drawer"; // ajuste o caminho conforme necessário
-import { Button } from "@heroui/button";
 
 // Mock dos componentes externos
 vi.mock("@heroui/drawer", () => ({
   Drawer: vi.fn(({ children, isOpen, radius, backdrop, hideCloseButton }) => (
     <div
-      data-testid="drawer"
-      data-isopen={isOpen}
-      data-radius={radius}
       data-backdrop={backdrop}
       data-hideclosebutton={hideCloseButton}
+      data-isopen={isOpen}
+      data-radius={radius}
+      data-testid="drawer"
     >
       {isOpen && children}
     </div>
@@ -37,12 +37,12 @@ vi.mock("@heroui/drawer", () => ({
 vi.mock("@heroui/button", () => ({
   Button: vi.fn(({ children, onPress, color, variant, className }) => (
     <button
-      onClick={onPress}
       data-color={color}
-      data-variant={variant}
       data-testid={
         className?.includes("w-full") ? "full-width-button" : "button"
       }
+      data-variant={variant}
+      onClick={onPress}
     >
       {children}
     </button>
@@ -121,6 +121,7 @@ describe("Drawer Component", () => {
 
   it("should call onLeftButtonClick when left icon is clicked", () => {
     const onLeftButtonClick = vi.fn();
+
     renderComponent({ onLeftButtonClick });
 
     fireEvent.click(screen.getByTestId("icon-left"));
@@ -129,6 +130,7 @@ describe("Drawer Component", () => {
 
   it("should call onRightButtonClick when right icon is clicked", () => {
     const onRightButtonClick = vi.fn();
+
     renderComponent({ onRightButtonClick });
 
     fireEvent.click(screen.getByTestId("icon-right"));
@@ -152,6 +154,7 @@ describe("Drawer Component", () => {
 
     it("should call onCancelButtonClick when Cancel button is clicked", () => {
       const onCancelButtonClick = vi.fn();
+
       renderComponent({ onCancelButtonClick });
 
       fireEvent.click(screen.getByText("Cancel"));
@@ -160,6 +163,7 @@ describe("Drawer Component", () => {
 
     it("should call onSave when Save button is clicked", () => {
       const onSave = vi.fn();
+
       renderComponent({ onSave });
 
       fireEvent.click(screen.getByText("Save"));
@@ -178,6 +182,7 @@ describe("Drawer Component", () => {
 
     it("should call onApply when Apply button is clicked", () => {
       const onApply = vi.fn();
+
       renderComponent({ mainStep: false, onApply });
 
       fireEvent.click(screen.getByText("Apply"));
@@ -195,6 +200,7 @@ describe("Drawer Component", () => {
     renderComponent();
 
     const header = screen.getByTestId("drawer-header");
+
     expect(header).toHaveClass("flex");
     expect(header).toHaveClass("flex-col");
     expect(header).toHaveClass("gap-1");
@@ -204,6 +210,7 @@ describe("Drawer Component", () => {
     renderComponent();
 
     const footer = screen.getByTestId("drawer-footer");
+
     expect(footer).toHaveClass("flex");
     expect(footer).toHaveClass("w-full");
     expect(footer).toHaveClass("justify-between");
@@ -213,6 +220,7 @@ describe("Drawer Component", () => {
     renderComponent();
 
     const drawer = screen.getByTestId("drawer");
+
     expect(drawer).toHaveAttribute("data-isopen", "true");
     expect(drawer).toHaveAttribute("data-radius", "none");
     expect(drawer).toHaveAttribute("data-backdrop", "transparent");
@@ -223,10 +231,12 @@ describe("Drawer Component", () => {
     renderComponent();
 
     const title = screen.getByText("Test Drawer");
+
     expect(title).toHaveClass("text-2xl");
     expect(title).toHaveClass("font-semibold");
 
     const description = screen.getByText("Test description");
+
     expect(description).toHaveClass("font-light");
     expect(description).toHaveClass("text-sm");
     expect(description).toHaveClass("text-gray-500");

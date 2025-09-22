@@ -1,6 +1,7 @@
+import { useState, useCallback, useEffect } from "react";
+
 import { MOCK_OPTIONS, SERVER_OPTIONS } from "@/constants";
 import { MockOption } from "@/types";
-import { useState, useCallback, useEffect } from "react";
 
 export interface ApiResponse {
   success: boolean;
@@ -25,12 +26,14 @@ export const useMockApi = () => {
       // Mock correct answer 90% of times
       if (Math.random() > 0.1) {
         setMockOptions(MOCK_OPTIONS);
+
         return MOCK_OPTIONS;
       } else {
         throw new Error("Error on retrieve data");
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknow error";
+
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -64,7 +67,9 @@ export const useMockApi = () => {
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Unknow error";
+
         setError(errorMessage);
+
         return {
           success: false,
           message: errorMessage,
@@ -73,7 +78,7 @@ export const useMockApi = () => {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {

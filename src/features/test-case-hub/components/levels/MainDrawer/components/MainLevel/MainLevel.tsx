@@ -1,10 +1,12 @@
 import { useState } from "react";
-import Option, { PATH_CONDITIONS, PATH_OPTIONS } from "./constants";
-import Card from "@/components/shared/Card/Card";
 import { Switch } from "@heroui/switch";
 import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
+
+import Option, { PATH_CONDITIONS, PATH_OPTIONS } from "./constants";
+
+import Card from "@/components/shared/Card/Card";
 import { CreateLevels } from "@/features/test-case-hub/hooks/levelManager/types";
 import { MockOption } from "@/types";
 import { TEST_GROUPS } from "@/constants";
@@ -29,11 +31,11 @@ const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
     return mockOptions?.map((selectedMockOption) => (
       <li className="mb-4 last:mb-0">
         <Card
-          moreAction
           key={selectedMockOption.id}
-          title={selectedMockOption?.serverOption?.label}
+          moreAction
           description={selectedMockOption.label}
           mockIcon={selectedMockOption.key}
+          title={selectedMockOption?.serverOption?.label}
         />
       </li>
     ));
@@ -55,16 +57,16 @@ const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
             </p>
             <Switch
               className="ml-2"
-              size="sm"
               isSelected={fullFlow}
+              size="sm"
               onChange={() => setFullFlow(!fullFlow)}
-            ></Switch>
+            />
           </div>
         </div>
         <ul className="flex flex-col mt-4">
           {PATH_OPTIONS.map((option: Option, index: number) => (
             <li key={`${option.title}-${index}`}>
-              <Card title={option.title} description={option.description} />
+              <Card description={option.description} title={option.title} />
             </li>
           ))}
         </ul>
@@ -81,17 +83,17 @@ const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
                 rendermockOptions()
               ) : (
                 <Card
-                  onClick={() => onStepCardClick(option)}
-                  title={option.title}
                   description={option.description}
+                  title={option.title}
+                  onClick={() => onStepCardClick(option)}
                 />
               )}
             </li>
           ))}
           {mockOptions.length !== 0 && (
             <div
-              onClick={() => onLevelSelect(CreateLevels.MOCK_CONFIGURATION)}
               className="flex w-full mt-4 justify-end cursor-pointer"
+              onClick={() => onLevelSelect(CreateLevels.MOCK_CONFIGURATION)}
             >
               <h2 className="font-semibold text-xs">Add new mock</h2>
             </div>
@@ -104,41 +106,41 @@ const MainLevel = ({ onLevelSelect, mockOptions = [] }: MainLevelProps) => {
         </h2>
         <Form className="w-full flex flex-col mt-4 border rounded-sm border-gray-200 gap-0">
           <Input
-            color="primary"
-            radius="none"
             isRequired
-            label="Name"
-            labelPlacement="inside"
-            name="name"
-            placeholder="Enter the name of the test"
-            type="text"
             classNames={{
               inputWrapper: "bg-white border-b border-gray-200",
               input: "placeholder:text-foreground-500",
             }}
+            color="primary"
+            label="Name"
+            labelPlacement="inside"
+            name="name"
+            placeholder="Enter the name of the test"
+            radius="none"
+            type="text"
           />
           <Textarea
-            radius="none"
             isRequired
+            classNames={{
+              inputWrapper: "bg-white border-b border-gray-200",
+            }}
             label="Description"
             labelPlacement="inside"
             name="description"
             placeholder="Add information about the test"
+            radius="none"
             type="description"
-            classNames={{
-              inputWrapper: "bg-white border-b border-gray-200",
-            }}
           />
           <div className="flex w-full flex-wrap">
             <Select
               className="w-full"
-              radius="none"
-              label="Group"
-              placeholder="Add your test to a group"
-              labelPlacement="inside"
               classNames={{
                 trigger: "bg-white",
               }}
+              label="Group"
+              labelPlacement="inside"
+              placeholder="Add your test to a group"
+              radius="none"
             >
               {TEST_GROUPS.map((testGroup) => (
                 <SelectItem key={testGroup.key}>{testGroup.label}</SelectItem>
