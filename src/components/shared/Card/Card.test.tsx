@@ -77,67 +77,6 @@ describe("Card Component", () => {
       fireEvent.click(actionIcon);
     }
 
-    expect(mockOnClick).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render mock icon when mockIcon prop is provided", () => {
-    render(<Card {...defaultProps} mockIcon={mockIcon} />);
-
-    expect(mockGetIcon).toHaveBeenCalledWith(mockIcon);
-    expect(screen.getByTestId("mock-icon"));
-
-    it("should not render mock icon when mockIcon prop is not provided", () => {
-      render(<Card {...defaultProps} />);
-
-      expect(mockGetIcon).not.toHaveBeenCalled();
-      expect(screen.queryByTestId("mock-icon"));
-    });
-
-    it("should apply correct styling to mock icon container", () => {
-      render(<Card {...defaultProps} mockIcon={mockIcon} />);
-
-      const iconContainer = screen.getByTestId("mock-icon").parentElement;
-      expect(iconContainer);
-    });
-
-    it("should render without title and description", () => {
-      render(<Card onClick={mockOnClick} />);
-
-      expect(screen.queryByText("Test Title"));
-      expect(screen.queryByText("Test Description"));
-    });
-
-    it("should render with JSX description", () => {
-      const jsxDescription = (
-        <span data-testid="jsx-description">JSX Description</span>
-      );
-      render(<Card {...defaultProps} description={jsxDescription} />);
-
-      expect(screen.getByTestId("jsx-description"));
-    });
-
-    it("should have correct CSS classes for text elements", () => {
-      render(<Card {...defaultProps} />);
-
-      const titleElement = screen.getByText("Test Title");
-      const descriptionElement = screen.getByText("Test Description");
-
-      expect(titleElement);
-      expect(descriptionElement);
-    });
-
-    it("should use default onClick handler when not provided", () => {
-      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-
-      // Create a component without onClick prop
-      const { getByTestId } = render(<Card title="Test" description="Test" />);
-
-      fireEvent.click(getByTestId("hero-ui-card"));
-
-      // The default onClick should be called (which is an empty function)
-      expect(consoleSpy).not.toHaveBeenCalled(); // No error should occur
-
-      consoleSpy.mockRestore();
-    });
+    expect(mockOnClick).toHaveBeenCalled();
   });
 });

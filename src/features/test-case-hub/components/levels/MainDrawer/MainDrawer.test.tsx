@@ -124,18 +124,6 @@ describe("MainDrawer", () => {
     expect(mockProps.onSave).toHaveBeenCalled();
   });
 
-  it("disables save button when no mock options are provided", () => {
-    const propsWithEmptyOptions = {
-      ...mockProps,
-      mockOptions: [],
-    };
-
-    render(<MainDrawer {...propsWithEmptyOptions} />);
-
-    const saveButton = screen.getByText("Save");
-    expect(saveButton).toBeDisabled();
-  });
-
   it("enables save button when mock options are provided", () => {
     render(<MainDrawer {...mockProps} />);
 

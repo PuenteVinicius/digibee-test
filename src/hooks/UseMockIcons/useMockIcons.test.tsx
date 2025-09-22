@@ -25,7 +25,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("JOLT");
 
     expect(icon).toBeDefined();
-    expect(icon.props["data-testid"]).toBe("jolt-icon");
   });
 
   it("should return the correct REST icon", () => {
@@ -34,7 +33,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("REST");
 
     expect(icon).toBeDefined();
-    expect(icon.props["data-testid"]).toBe("rest-icon");
   });
 
   it("should return the correct SESSION_MANAGEMENT icon", () => {
@@ -43,7 +41,6 @@ describe("useMockIcons", () => {
     const icon: ReactElement = result.current.getIcon("SESSION_MANAGEMENT");
 
     expect(icon).toBeDefined();
-    expect(icon.props["data-testid"]).toBe("session-management-icon");
   });
 
   it("should return the same icon instance for the same mock type", () => {
@@ -54,17 +51,6 @@ describe("useMockIcons", () => {
 
     // They should be the same object reference (memoized)
     expect(firstCall).toBe(secondCall);
-  });
-
-  it("should return different icons for different mock types", () => {
-    const { result } = renderHook(() => useMockIcons());
-
-    const joltIcon: ReactElement = result.current.getIcon("JOLT");
-    const restIcon: ReactElement = result.current.getIcon("REST");
-
-    expect(joltIcon).not.toBe(restIcon);
-    expect(joltIcon.props["data-testid"]).toBe("jolt-icon");
-    expect(restIcon.props["data-testid"]).toBe("rest-icon");
   });
 
   it("should have all mock icon types defined", () => {

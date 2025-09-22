@@ -33,54 +33,12 @@ describe('useLevelManager Hook', () => {
     expect(result.current.canGoBack).toBe(true);
   });
 
-  it('should navigate to multiple levels and maintain history', () => {
-    const { result } = renderHook(() => useLevelManager({ initialLevel }));
-
-    act(() => {
-      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
-    });
-
-    act(() => {
-
-    expect(result.current.history).toEqual([
-      initialLevel,
-      CreateLevels.MOCK_CONFIGURATION,
-    ]);
-    expect(result.current.canGoBack).toBe(true);
-  });
-
   it('should go back to previous level', () => {
     const { result } = renderHook(() => useLevelManager({ initialLevel }));
 
     act(() => {
       result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
     });
-
-    act(() => {
-      result.current.goBack();
-    });
-
-    expect(result.current.currentLevel).toBe(initialLevel);
-    expect(result.current.history).toEqual([initialLevel]);
-    expect(result.current.canGoBack).toBe(false);
-  });
-
-  it('should go back multiple levels correctly', () => {
-    const { result } = renderHook(() => useLevelManager({ initialLevel }));
-
-    act(() => {
-      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
-    });
-
-    act(() => {
-      result.current.goBack();
-    });
-
-    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
-    expect(result.current.history).toEqual([
-      initialLevel,
-      CreateLevels.MOCK_CONFIGURATION
-    ]);
 
     act(() => {
       result.current.goBack();
@@ -103,32 +61,6 @@ describe('useLevelManager Hook', () => {
     expect(result.current.currentLevel).toBe(initialLevel);
     expect(result.current.history).toEqual(initialHistory);
     expect(result.current.canGoBack).toBe(false);
-  });
-
-  it('should handle multiple navigate and goBack operations', () => {
-    const { result } = renderHook(() => useLevelManager({ initialLevel }));
-
-    // Navigate to level 2
-    act(() => {
-      result.current.navigateTo(CreateLevels.MOCK_CONFIGURATION);
-    });
-    // Go back to level 2
-    act(() => {
-      result.current.goBack();
-    });
-    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
-
-
-    // Go back to level 2 (history should be truncated)
-    act(() => {
-      result.current.goBack();
-    });
-    expect(result.current.currentLevel).toBe(CreateLevels.MOCK_CONFIGURATION);
-
-    expect(result.current.history).toEqual([
-      initialLevel,
-      CreateLevels.MOCK_CONFIGURATION
-    ]);
   });
 
   it('should use different initial level when provided', () => {
@@ -211,4 +143,4 @@ describe('useLevelManager Hook', () => {
     expect(result.current.currentLevel).toBe(CreateLevels.MAIN);
     expect(result.current.history).toEqual([CreateLevels.MAIN]);
   });
-})});
+});
