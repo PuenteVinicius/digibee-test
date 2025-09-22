@@ -26,8 +26,6 @@ const MainDrawer = ({
   onSave,
   goBack,
 }: MainDrawerProps) => {
-    
-
   return (
     <Drawer
       isOpen={isOpen}

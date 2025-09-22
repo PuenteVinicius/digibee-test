@@ -38,32 +38,42 @@ const MockConfigurationLevel = ({
     <div className="flex flex-col w-full justify-center px-0">
       <div className="flex w-full flex-wrap mt-10 pb-6 border-b border-gray-200 rounded-lg">
         <Select
+          aria-label="none"
           isLoading={loading && mockOptions.length === 0}
           className="w-full mx-6 h-[60px]"
           radius="lg"
           size="lg"
           variant="bordered"
           placeholder="Choose a step to mock..."
-          labelPlacement="inside"
+          startContent={
+            <div className="flex items-center">
+              {mockOption?.key === "JOLT" && <JoltIcon />}
+              {mockOption?.key === "REST" && <RestIcon />}
+              {mockOption?.key === "SESSION_MANAGEMENT" && (
+                <SessionManagementIcon />
+              )}
+            </div>
+          }
           classNames={{
             mainWrapper: "flex items-center h-full",
             trigger: "bg-white h-full border",
           }}
-          value={mockOption?.label}
         >
           {mockOptions.map((mockOption) => (
             <SelectItem
               onClick={() => saveMockOption(mockOption)}
               key={mockOption.id}
+              startContent={
+                <div className="flex items-center">
+                  {mockOption?.key === "JOLT" && <JoltIcon />}
+                  {mockOption?.key === "REST" && <RestIcon />}
+                  {mockOption?.key === "SESSION_MANAGEMENT" && (
+                    <SessionManagementIcon />
+                  )}
+                </div>
+              }
             >
-              <div className="flex items-center">
-                {mockOption.key === "JOLT" && <JoltIcon />}
-                {mockOption.key === "REST" && <RestIcon />}
-                {mockOption.key === "SESSION_MANAGEMENT" && (
-                  <SessionManagementIcon />
-                )}
-                <span className="ml-2">{mockOption.label}</span>
-              </div>
+              {mockOption.label}
             </SelectItem>
           ))}
         </Select>

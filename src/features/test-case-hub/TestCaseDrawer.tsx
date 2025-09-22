@@ -25,7 +25,9 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
         currentMockOptions.push(mockOption);
         setMockOptions(currentMockOptions);
         goBack();
+        return;
       }
+      callWarningToast();
     }
   };
 
@@ -33,6 +35,13 @@ const TestCaseDrawer = ({ isOpen, onCloseDrawer }: DrawerProps) => {
     addToast({
       description: "Your test has been created successfully.",
       color: "success",
+    });
+  };
+
+  const callWarningToast = () => {
+    addToast({
+      description: "the test is already selected",
+      color: "warning",
     });
   };
 
