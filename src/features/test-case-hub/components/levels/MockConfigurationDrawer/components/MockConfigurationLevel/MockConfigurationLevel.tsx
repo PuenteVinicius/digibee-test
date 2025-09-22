@@ -41,6 +41,7 @@ const MockConfigurationLevel = ({
       <div className="flex w-full flex-wrap mt-10 pb-6 border-b border-gray-200 rounded-lg">
         <Select
           aria-label="none"
+          aria-hidden="true"
           className="w-full mx-6 h-[60px]"
           classNames={{
             mainWrapper: "flex items-center h-full",
@@ -96,7 +97,7 @@ const MockConfigurationLevel = ({
                       base: cn(
                         "inline-flex m-0 ml-2 hover:border-primary items-center justify-between",
                         "flex-row-reverse cursor-pointer rounded-lg p-4",
-                        "border border-gray-200",
+                        "border border-gray-200"
                       ),
                     }}
                     description={serverOption.createdAt?.toString()}
